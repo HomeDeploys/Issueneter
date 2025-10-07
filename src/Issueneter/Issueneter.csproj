@@ -5,4 +5,11 @@
     <ProjectReference Include="..\Infrastructure\Issueneter.Infrastructure.Database\Issueneter.Infrastructure.Database.csproj" />
     <ProjectReference Include="..\Infrastructure\Issueneter.Infrastructure.Telegram\Issueneter.Infrastructure.Telegram.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NetEscapades.Configuration.Yaml" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Extensions.Hosting" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+  </ItemGroup>
 </Project>
