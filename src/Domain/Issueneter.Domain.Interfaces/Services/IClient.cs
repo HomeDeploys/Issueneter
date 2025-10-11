@@ -4,7 +4,7 @@ namespace Issueneter.Domain.Interfaces.Services;
 
 public interface IClient
 {
-    static ClientType Type { get; }
+    ClientType Type { get; }
     bool Validate(string target);
     Task Send(string target, string messages,  CancellationToken token);
 }

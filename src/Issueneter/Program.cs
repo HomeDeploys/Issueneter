@@ -1,3 +1,4 @@
+using Issueneter.Application;
 using Issueneter.Infrastructure.Database;
 using Serilog;
 
@@ -16,7 +17,9 @@ builder.Configuration.AddYamlFile(configFilePath, optional: true);
 
 builder.Services.AddSerilog();
 builder.Services.AddControllers();
-builder.Services.AddDatabase(builder.Configuration);
+builder.Services
+    .AddDatabase(builder.Configuration)
+    .AddApplicationServices();
 
 builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console().MinimumLevel.Debug());
 

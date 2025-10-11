@@ -4,5 +4,5 @@ namespace Issueneter.Domain.Interfaces.Services;
 
 public interface IProviderFactory
 {
-    IEntityProvider Get(ProviderType providerType);
+    IEntityProvider? Get(ProviderType providerType);
 }
