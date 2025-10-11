@@ -1,6 +1,6 @@
 ﻿namespace Issueneter.Common.Exceptions;
 
-public class FilterParseException : Exception
+public class FilterParseException : IssueneterException
 {
     public FilterParseException() { }
     public FilterParseException(string message) : base(message) { }

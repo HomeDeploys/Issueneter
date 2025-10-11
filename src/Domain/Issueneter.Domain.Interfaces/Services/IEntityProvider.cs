@@ -7,5 +7,5 @@ public interface IEntityProvider
 {
     ProviderType Type { get; }
     bool Validate(string target);
-    Task<IReadOnlyCollection<Entity>> Fetch(string target, CancellationToken token);
+    Task<IReadOnlyCollection<Entity>> Fetch(long scheduleId, string target, CancellationToken token);
 }
