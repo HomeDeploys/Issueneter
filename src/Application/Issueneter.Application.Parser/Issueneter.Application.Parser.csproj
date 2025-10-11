@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <NoWarn>CS3021</NoWarn>
+    </PropertyGroup>
+    
+    <ItemGroup>
+      <PackageReference Include="Antlr4.Runtime.Standard" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Domain\Issueneter.Domain.Filters\Issueneter.Domain.Filters.csproj" />
+      <ProjectReference Include="..\..\Domain\Issueneter.Domain.Interfaces\Issueneter.Domain.Interfaces.csproj" />
+    </ItemGroup>
+
+</Project>

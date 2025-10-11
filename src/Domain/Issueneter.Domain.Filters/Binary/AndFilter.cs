@@ -5,22 +5,20 @@ namespace Issueneter.Domain.Filters.Binary;
 
 public class AndFilter : IFilter
 {
-    private readonly IFilter _left;
-    private readonly IFilter _right;
+    private readonly IReadOnlyCollection<IFilter> _filters;
     
-    public AndFilter(IFilter left, IFilter right)
+    public AndFilter(IReadOnlyCollection<IFilter> filters)
     {
-        _left = left;
-        _right = right;
+        _filters = filters;
     }
 
     public bool IsValid(Entity entity)
     {
-        return _left.IsValid(entity) && _right.IsValid(entity);
+        return _filters.All(f => f.IsValid(entity));
     }
 
     public bool IsApplicable(Entity entity)
     {
-        return _left.IsApplicable(entity) && _right.IsApplicable(entity);
+        return _filters.All(f => f.IsApplicable(entity));
     }
 }

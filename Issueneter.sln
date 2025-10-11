@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Issueneter.Infrastructure.G
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Issueneter.Domain.Filters", "src\Domain\Issueneter.Domain.Filters\Issueneter.Domain.Filters.csproj", "{3A8A3DA5-3D86-4C42-94FE-EFB753289256}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Issueneter.Application.Parser", "src\Application\Issueneter.Application.Parser\Issueneter.Application.Parser.csproj", "{D201B53D-FF43-4244-B73D-AE2E89621519}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,7 @@ Global
 		{BB124E1C-1B55-4946-B082-59327A541DA3} = {766C34EC-D8F4-47C5-B995-F4CFCF5638DF}
 		{0C24F120-E1BB-45CE-943A-8B0A57B9F9AC} = {68DD2334-9BDC-4251-81F5-C35BE4DB743D}
 		{3A8A3DA5-3D86-4C42-94FE-EFB753289256} = {3E9ED457-5E94-45DB-BBA4-F9E84519373F}
+		{D201B53D-FF43-4244-B73D-AE2E89621519} = {79E2131E-A606-4117-AB71-99157D7D6FE3}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{98B5DA1F-394C-4EFA-8CCB-602EEF6F5907}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -96,5 +99,9 @@ Global
 		{3A8A3DA5-3D86-4C42-94FE-EFB753289256}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A8A3DA5-3D86-4C42-94FE-EFB753289256}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A8A3DA5-3D86-4C42-94FE-EFB753289256}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D201B53D-FF43-4244-B73D-AE2E89621519}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D201B53D-FF43-4244-B73D-AE2E89621519}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D201B53D-FF43-4244-B73D-AE2E89621519}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D201B53D-FF43-4244-B73D-AE2E89621519}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

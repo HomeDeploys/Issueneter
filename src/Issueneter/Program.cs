@@ -1,4 +1,5 @@
 using Issueneter.Application;
+using Issueneter.Application.Parser;
 using Issueneter.Infrastructure.Database;
 using Serilog;
 
@@ -19,7 +20,8 @@ builder.Services.AddSerilog();
 builder.Services.AddControllers();
 builder.Services
     .AddDatabase(builder.Configuration)
-    .AddApplicationServices();
+    .AddApplicationServices()
+    .AddParser();
 
 builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console().MinimumLevel.Debug());
 
