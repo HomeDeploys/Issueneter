@@ -1,6 +1,8 @@
 using Issueneter.Application;
 using Issueneter.Application.Parser;
 using Issueneter.Infrastructure.Database;
+using Issueneter.Infrastructure.Github;
+using Issueneter.Infrastructure.Telegram;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +22,8 @@ builder.Services.AddSerilog();
 builder.Services.AddControllers();
 builder.Services
     .AddDatabase(builder.Configuration)
+    .AddGithub(builder.Configuration)
+    .AddTelegram(builder.Configuration)
     .AddApplicationServices()
     .AddParser();
 
