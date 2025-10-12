@@ -1,6 +1,8 @@
 using FluentMigrator.Runner;
 using Issueneter.Domain.Interfaces.Connection;
+using Issueneter.Domain.Interfaces.Repos;
 using Issueneter.Infrastructure.Database.Connection;
+using Issueneter.Infrastructure.Database.Repos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,6 +23,7 @@ public static class ServiceCollectionExtensions
             .AddLogging(l => l.AddFluentMigratorConsole());
 
         return services
+            .AddScoped<IProviderSnapshotRepo, ProviderSnapshotRepo>()
             .AddScoped<DbConnectionFactory>()
             .AddScoped<ITransactionProvider>(sp => sp.GetRequiredService<DbConnectionFactory>());
     }
