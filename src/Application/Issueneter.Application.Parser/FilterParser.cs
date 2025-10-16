@@ -1,5 +1,6 @@
 ﻿using Antlr4.Runtime;
 using Issueneter.Common.Exceptions;
+using Issueneter.Domain.Filters.Unary;
 using Issueneter.Domain.Interfaces.Filters;
 
 namespace Issueneter.Application.Parser;
@@ -8,6 +9,12 @@ internal class FilterParser : IFilterParser
 {
     public IFilter Parse(string filter)
     {
+        if (string.IsNullOrWhiteSpace(filter))
+        {
+            return new EmptyFilter();
+        }
+        
+        
         var inputStream = new AntlrInputStream(filter.Trim());
         var lexer = new QueryLexer(inputStream);
         var tokens = new CommonTokenStream(lexer);
