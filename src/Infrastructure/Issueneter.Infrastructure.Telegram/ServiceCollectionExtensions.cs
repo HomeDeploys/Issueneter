@@ -3,6 +3,8 @@ using Issueneter.Infrastructure.Telegram.Configuration;
 using Issueneter.Infrastructure.Telegram.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Telegram.Bot;
 
 namespace Issueneter.Infrastructure.Telegram;
 
@@ -12,6 +14,8 @@ public static class ServiceCollectionExtensions
     {
         serviceCollection.Configure<TelegramClientConfiguration>(configuration.GetSection(nameof(TelegramClientConfiguration)));
 
-        return serviceCollection.AddScoped<IClient, TelegramClient>();
+        return serviceCollection
+            .AddSingleton<TelegramHandler>()
+            .AddScoped<IClient, TelegramClient>();
     }
 }
