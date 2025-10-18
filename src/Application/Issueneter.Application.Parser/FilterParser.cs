@@ -2,18 +2,18 @@
 using Issueneter.Common.Exceptions;
 using Issueneter.Domain.Filters.Unary;
 using Issueneter.Domain.Interfaces.Filters;
+using Issueneter.Domain.ValueObjects;
 
 namespace Issueneter.Application.Parser;
 
 internal class FilterParser : IFilterParser
 {
-    public IFilter Parse(string filter)
+    public ParseResult<IFilter> Parse(string filter)
     {
         if (string.IsNullOrWhiteSpace(filter))
         {
-            return new EmptyFilter();
+            return ParseResult<IFilter>.Success(new EmptyFilter());
         }
-        
         
         var inputStream = new AntlrInputStream(filter.Trim());
         var lexer = new QueryLexer(inputStream);
@@ -24,10 +24,11 @@ internal class FilterParser : IFilterParser
         var query = parser.query();
         if (errorListener.HasErrors(out var errorMessage))
         {
-            throw new FilterParseException(errorMessage);
+            return ParseResult<IFilter>.Fail(errorMessage);
         }
         
         var builder = new FilterBuilder();
-        return query.Accept(builder);
+        var filterObject = query.Accept(builder);
+        return ParseResult<IFilter>.Success(filterObject);
     }
 }

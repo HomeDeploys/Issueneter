@@ -2,6 +2,7 @@
 using Issueneter.Common.Exceptions;
 using Issueneter.Domain.Enums;
 using Issueneter.Domain.Interfaces.Services;
+using Issueneter.Domain.ValueObjects;
 using Issueneter.Infrastructure.Telegram.Configuration;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
@@ -21,10 +22,16 @@ internal partial class TelegramClient : IClient
     }
 
     public ClientType Type =>  ClientType.Telegram;
-    public bool Validate(string target)
+    public ValidationResult Validate(string target)
     {
-        var regex = TargetChatRegex();
-        return regex.IsMatch(target);
+        var match = TargetChatRegex().IsMatch(target);
+
+        if (!match)
+        {
+            return ValidationResult.Fail("Telegram target must be in format <chatId> or <chatId>/<threadId>");
+        }
+        
+        return ValidationResult.Success;
     }
 
     public async Task Send(string target, string message, CancellationToken token)

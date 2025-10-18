@@ -2,7 +2,4 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Domain\Issueneter.Domain.Interfaces\Issueneter.Domain.Interfaces.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Commands\" />
-  </ItemGroup>
 </Project>

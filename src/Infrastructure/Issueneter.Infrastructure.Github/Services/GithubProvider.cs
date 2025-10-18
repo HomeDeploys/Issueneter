@@ -3,6 +3,7 @@ using Issueneter.Domain.Enums;
 using Issueneter.Domain.Interfaces.Repos;
 using Issueneter.Domain.Interfaces.Services;
 using Issueneter.Domain.Models;
+using Issueneter.Domain.ValueObjects;
 using Issueneter.Infrastructure.Github.Models;
 
 namespace Issueneter.Infrastructure.Github.Services;
@@ -21,12 +22,20 @@ internal class GithubProvider : IEntityProvider
 
     public ProviderType Type => ProviderType.Github;
     
-    public bool Validate(string target)
+    public ValidationResult Validate(string target)
     {
-        return GithubTargetParser.TryParse(target, out _, out _);
+        // TODO: Add check if repo exists
+        var parsed = GithubTargetParser.TryParse(target, out _, out _);
+
+        if (!parsed)
+        {
+            return ValidationResult.Fail($"Github target must be in format <owner>/<repo>");
+        }
+        
+        return ValidationResult.Success;
     }
 
-    public async Task<IReadOnlyCollection<Entity>> Fetch(long workerId, string target, CancellationToken token)
+    public async Task<IReadOnlyCollection<Entity>> Fetch(WorkerId workerId, string target, CancellationToken token)
     {
         var isTargetValid = GithubTargetParser.TryParse(target, out var owner, out var repo);
 
@@ -57,5 +66,17 @@ internal class GithubProvider : IEntityProvider
         await _snapshotRepo.UpsertSnapshot(workerId, snapshot, token);
 
         return issues;
+    }
+
+    public Entity GetSample()
+    {
+        return new GithubIssueEntity()
+        {
+            Author = "Author",
+            Body = "Some body",
+            CreatedAt = DateTimeOffset.Now,
+            Labels = ["Label"],
+            Title = "Title"
+        };
     }
 }

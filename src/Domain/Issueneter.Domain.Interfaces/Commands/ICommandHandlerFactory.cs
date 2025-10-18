@@ -4,5 +4,5 @@ namespace Issueneter.Domain.Interfaces.Commands;
 
 public interface ICommandHandlerFactory
 {
-    bool TryGet(Command command, out ICommandHandler handler);
+    ICommandHandler? Get(Command command);
 }

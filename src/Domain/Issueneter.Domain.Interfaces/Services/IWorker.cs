@@ -1,6 +1,8 @@
-﻿namespace Issueneter.Domain.Interfaces.Services;
+﻿using Issueneter.Domain.ValueObjects;
+
+namespace Issueneter.Domain.Interfaces.Services;
 
 public interface IWorker
 {
-    Task Execute(long workerId, CancellationToken token);
+    Task Execute(WorkerId workerId, CancellationToken token);
 }

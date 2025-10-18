@@ -1,7 +1,9 @@
-﻿namespace Issueneter.Domain.Interfaces.Repos;
+﻿using Issueneter.Domain.ValueObjects;
+
+namespace Issueneter.Domain.Interfaces.Repos;
 
 public interface IProviderSnapshotRepo
 {
-    Task<T?> GetLastSnapshot<T>(long workerId, CancellationToken token) where T : class;
-    Task UpsertSnapshot<T>(long workerId, T snapshot, CancellationToken token) where T : class;
+    Task<T?> GetLastSnapshot<T>(WorkerId workerId, CancellationToken token) where T : class;
+    Task UpsertSnapshot<T>(WorkerId workerId, T snapshot, CancellationToken token) where T : class;
 }

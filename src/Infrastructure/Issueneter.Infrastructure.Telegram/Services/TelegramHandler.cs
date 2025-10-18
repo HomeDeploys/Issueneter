@@ -13,6 +13,7 @@ internal class TelegramHandler
     private readonly TelegramBotClient _client;
     private readonly CancellationTokenSource _tokenSource;
     private readonly ICommandParser _commandParser;
+    // TODO: Create scope and resolve from it
     private readonly ICommandHandlerFactory _commandHandlerFactory;
 
     public TelegramHandler(
@@ -43,7 +44,7 @@ internal class TelegramHandler
         if (string.IsNullOrEmpty(message.Text)) return;
         
         var reply = await HandleMessage(message.Text, _tokenSource.Token);
-        await _client.SendMessage(message.Chat.Id, reply);
+        await _client.SendMessage(message.Chat.Id, reply, messageThreadId: message.MessageThreadId);
     }
 
     // TODO: Error handling
@@ -57,24 +58,11 @@ internal class TelegramHandler
         }
         
         var command = parseResult.Command!;
-        var handlerExists = _commandHandlerFactory.TryGet(command,  out var handler);
+        var handler = _commandHandlerFactory.Get(command);
 
-        if (!handlerExists)
+        if (handler is null)
         {
             return $"No handler exists for command {command.Name}";
-        }
-
-        var validationResult = handler.Validate(command);
-
-        if (!validationResult.IsSuccess)
-        {
-            var errorBuilder = new StringBuilder();
-            errorBuilder.AppendLine("Invalid command:");
-            foreach (var error in validationResult.Errors)
-            {
-                errorBuilder.AppendLine(error);
-            }
-            return errorBuilder.ToString();
         }
 
         return await handler.Handle(command, token);

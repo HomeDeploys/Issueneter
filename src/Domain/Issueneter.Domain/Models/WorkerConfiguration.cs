@@ -1,13 +1,11 @@
-﻿using Issueneter.Domain.Enums;
+﻿using Issueneter.Domain.ValueObjects;
 
 namespace Issueneter.Domain.Models;
 
 public record WorkerConfiguration(
-    long Id,
-    ProviderType ProviderType,
-    string ProviderTarget,
+    WorkerId Id,
+    ProviderInfo ProviderInfo,
     string Schedule,
     string Filter,
-    ClientType ClientType,
-    IReadOnlyCollection<string> ClientTarget,
+    ClientInfo ClientInfo,
     string Template);
