@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <ItemGroup>
-    <ProjectReference Include="..\Application\Issueneter.Application.Parser\Issueneter.Application.Parser.csproj" />
+    <ProjectReference Include="..\Application\Issueneter.Application.Filters\Issueneter.Application.Filters.csproj" />
     <ProjectReference Include="..\Application\Issueneter.Application\Issueneter.Application.csproj" />
     <ProjectReference Include="..\Infrastructure\Issueneter.Infrastructure.Background\Issueneter.Infrastructure.Background.csproj" />
     <ProjectReference Include="..\Infrastructure\Issueneter.Infrastructure.Database\Issueneter.Infrastructure.Database.csproj" />

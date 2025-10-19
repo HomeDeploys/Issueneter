@@ -13,7 +13,7 @@ internal class Worker : IWorker
     private readonly IClientFactory _clientFactory;
     private readonly IFilterParser _parser;
     private readonly IMessageFormatter _formatter;
-    private readonly IWorkerRepo _repo;
+    private readonly IWorkerConfigurationRepo _configurationRepo;
     private readonly ILogger<Worker> _logger;
 
     public Worker(
@@ -21,14 +21,14 @@ internal class Worker : IWorker
         IClientFactory clientFactory, 
         IFilterParser parser, 
         IMessageFormatter formatter, 
-        IWorkerRepo repo, 
+        IWorkerConfigurationRepo configurationRepo, 
         ILogger<Worker> logger)
     {
         _providerFactory = providerFactory;
         _clientFactory = clientFactory;
         _parser = parser;
         _formatter = formatter;
-        _repo = repo;
+        _configurationRepo = configurationRepo;
         _logger = logger;
     }
 
@@ -36,7 +36,7 @@ internal class Worker : IWorker
     {
         try
         {
-            var config = await _repo.Get(workerId, token);
+            var config = await _configurationRepo.Get(workerId, token);
             var provider = _providerFactory.Get(config.ProviderInfo.Type) 
                            ?? throw new NotFoundException($"Provider with type {config.ProviderInfo.Type} not found");
             var client = _clientFactory.Get(config.ClientInfo.Type)

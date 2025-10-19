@@ -13,7 +13,7 @@ public static class ServiceCollectionExtensions
         services.Configure<GithubClientConfiguration>(configuration.GetSection(nameof(GithubClientConfiguration)));
         
         return services
-            .AddScoped<GithubClient>()
+            .AddSingleton<GithubClient>()
             .AddScoped<IEntityProvider, GithubProvider>();
     }
 }

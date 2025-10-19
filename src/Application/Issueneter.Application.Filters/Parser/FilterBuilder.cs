@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
-using Issueneter.Domain.Filters.Binary;
-using Issueneter.Domain.Filters.Unary;
+using Issueneter.Application.Parser.Binary;
+using Issueneter.Application.Parser.Unary;
 using Issueneter.Domain.Interfaces.Filters;
 
 namespace Issueneter.Application.Parser;

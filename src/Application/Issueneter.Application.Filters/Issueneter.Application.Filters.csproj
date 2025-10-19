@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <NoWarn>CS3021</NoWarn>
+        <RootNamespace>Issueneter.Application.Parser</RootNamespace>
     </PropertyGroup>
     
     <ItemGroup>
@@ -8,7 +9,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Domain\Issueneter.Domain.Filters\Issueneter.Domain.Filters.csproj" />
       <ProjectReference Include="..\..\Domain\Issueneter.Domain.Interfaces\Issueneter.Domain.Interfaces.csproj" />
     </ItemGroup>
 

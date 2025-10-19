@@ -1,6 +1,6 @@
 ﻿using Antlr4.Runtime;
+using Issueneter.Application.Parser.Unary;
 using Issueneter.Common.Exceptions;
-using Issueneter.Domain.Filters.Unary;
 using Issueneter.Domain.Interfaces.Filters;
 using Issueneter.Domain.ValueObjects;
 

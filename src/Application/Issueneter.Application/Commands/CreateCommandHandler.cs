@@ -16,7 +16,7 @@ internal class CreateCommandHandler : ICommandHandler
     private readonly IScheduler _scheduler;
     private readonly IFilterParser _filterParser;
     private readonly IMessageFormatter _messageFormatter;
-    private readonly IWorkerRepo _workerRepo;
+    private readonly IWorkerConfigurationRepo _workerConfigurationRepo;
     private readonly ITransactionProvider _transactionProvider;
     
     public CreateCommandHandler(
@@ -25,7 +25,7 @@ internal class CreateCommandHandler : ICommandHandler
         IScheduler scheduler, 
         IMessageFormatter messageFormatter, 
         IFilterParser filterParser, 
-        IWorkerRepo workerRepo, 
+        IWorkerConfigurationRepo workerConfigurationRepo, 
         ITransactionProvider transactionProvider)
     {
         _providerFactory = providerFactory;
@@ -33,7 +33,7 @@ internal class CreateCommandHandler : ICommandHandler
         _scheduler = scheduler;
         _messageFormatter = messageFormatter;
         _filterParser = filterParser;
-        _workerRepo = workerRepo;
+        _workerConfigurationRepo = workerConfigurationRepo;
         _transactionProvider = transactionProvider;
     }
 
@@ -105,7 +105,7 @@ internal class CreateCommandHandler : ICommandHandler
 
         await using var transacton = await _transactionProvider.CreateTransaction(token);
         
-        var workerId = await _workerRepo.Create(config, token);
+        var workerId = await _workerConfigurationRepo.Create(config, token);
         config = config with
         {
             Id = workerId

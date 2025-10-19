@@ -1,7 +1,7 @@
 ﻿using Issueneter.Domain.Interfaces.Filters;
 using Issueneter.Domain.Models;
 
-namespace Issueneter.Domain.Filters.Unary;
+namespace Issueneter.Application.Parser.Unary;
 
 public class EmptyFilter : IFilter
 {

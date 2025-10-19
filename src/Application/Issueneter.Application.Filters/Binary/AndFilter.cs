@@ -1,13 +1,13 @@
 ﻿using Issueneter.Domain.Interfaces.Filters;
 using Issueneter.Domain.Models;
 
-namespace Issueneter.Domain.Filters.Binary;
+namespace Issueneter.Application.Parser.Binary;
 
-public class OrFilter : IFilter
+public class AndFilter : IFilter
 {
     private readonly IReadOnlyCollection<IFilter> _filters;
     
-    public OrFilter(IReadOnlyCollection<IFilter> filters)
+    public AndFilter(IReadOnlyCollection<IFilter> filters)
     {
         _filters = filters;
     }
@@ -19,6 +19,6 @@ public class OrFilter : IFilter
 
     public bool IsApplicable(Entity entity)
     {
-        return _filters.Any(f => f.IsApplicable(entity));
+        return _filters.All(f => f.IsApplicable(entity));
     }
 }
