@@ -1,5 +1,6 @@
 using Issueneter.Application;
 using Issueneter.Application.Parser;
+using Issueneter.Infrastructure.Background;
 using Issueneter.Infrastructure.Database;
 using Issueneter.Infrastructure.Github;
 using Issueneter.Infrastructure.Telegram;
@@ -21,6 +22,7 @@ builder.Configuration.AddYamlFile(configFilePath, optional: true);
 builder.Services.AddSerilog();
 builder.Services.AddControllers();
 builder.Services
+    .AddBackground(builder.Configuration)
     .AddDatabase(builder.Configuration)
     .AddGithub(builder.Configuration)
     .AddTelegram(builder.Configuration)
