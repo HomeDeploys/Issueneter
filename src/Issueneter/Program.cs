@@ -25,7 +25,7 @@ builder.Services
     .AddGithub(builder.Configuration)
     .AddTelegram(builder.Configuration)
     .AddApplicationServices()
-    .AddParser();
+    .AddFilters();
 
 builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console().MinimumLevel.Debug());
 

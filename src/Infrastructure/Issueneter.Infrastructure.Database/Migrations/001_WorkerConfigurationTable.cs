@@ -9,12 +9,12 @@ public class WorkerConfigurationTable : Migration {
         Execute.Sql("""
             CREATE TABLE IF NOT EXISTS worker_configuration(
                 worker_id bigserial primary key,
-                providerType smallint not null,
-                providerTarget text not null,
+                provider_type smallint not null,
+                provider_target text not null,
                 schedule text not null,
                 filter text not null,
-                clientType smallint not null,
-                clientTarget text not null,
+                client_type smallint not null,
+                client_target text not null,
                 template text not null,
             )
         """);

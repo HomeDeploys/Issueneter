@@ -5,7 +5,7 @@ namespace Issueneter.Application.Parser;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddParser(this IServiceCollection services)
+    public static IServiceCollection AddFilters(this IServiceCollection services)
     {
         return services.AddScoped<IFilterParser, FilterParser>();
     }

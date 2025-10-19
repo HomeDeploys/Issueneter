@@ -36,7 +36,8 @@ internal class Worker : IWorker
     {
         try
         {
-            var config = await _configurationRepo.Get(workerId, token);
+            var config = await _configurationRepo.Get(workerId, token)
+                            ?? throw new NotFoundException($"Worker {workerId} not found");
             var provider = _providerFactory.Get(config.ProviderInfo.Type) 
                            ?? throw new NotFoundException($"Provider with type {config.ProviderInfo.Type} not found");
             var client = _clientFactory.Get(config.ClientInfo.Type)

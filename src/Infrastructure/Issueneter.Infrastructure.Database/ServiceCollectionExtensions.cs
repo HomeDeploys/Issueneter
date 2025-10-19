@@ -24,6 +24,7 @@ public static class ServiceCollectionExtensions
 
         return services
             .AddScoped<IProviderSnapshotRepo, ProviderSnapshotRepo>()
+            .AddScoped<IWorkerConfigurationRepo, WorkerConfigurationRepo>()
             .AddScoped<DbConnectionFactory>()
             .AddScoped<ITransactionProvider>(sp => sp.GetRequiredService<DbConnectionFactory>());
     }
