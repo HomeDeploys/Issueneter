@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections;
+using System.Reflection;
 
 namespace Issueneter.Domain.Models;
 
@@ -29,16 +30,13 @@ public abstract class Entity
 
     public T? GetProperty<T>(string propertyName)
     {
-        var type = this.GetType();
+        var type = GetType();
 
         var prop = type.GetProperty(propertyName,
             BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
-        if (prop == null)
+        if (prop is null)
             throw new ArgumentException($"Property '{propertyName}' not found in {type.Name}.");
-
-        if (!prop.CanRead)
-            throw new InvalidOperationException($"Property '{propertyName}' is write-only.");
 
         var value = prop.GetValue(this);
 
@@ -50,6 +48,26 @@ public abstract class Entity
             T castValue => castValue,
             _ => throw new InvalidCastException(
                 $"Cannot cast property '{propertyName}' of type {value.GetType().Name} to {typeof(T).Name}.")
+        };
+    }
+
+    public string? GetProperty(string propertyName)
+    {
+        var type = GetType();
+
+        var prop = type.GetProperty(propertyName,
+            BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+        if (prop is null)
+            throw new ArgumentException($"Property '{propertyName}' not found in {type.Name}.");
+
+        var value = prop.GetValue(this);
+
+        return value switch
+        {
+            null => string.Empty,
+            IEnumerable enumerable => string.Join(", ", enumerable),
+            _ => value.ToString()
         };
     }
 }

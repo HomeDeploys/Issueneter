@@ -12,6 +12,7 @@ public static class ServiceCollectionExtensions
     {
         serviceCollection
             .AddSingleton<ICommandParser, CommandParser>()
+            .AddSingleton<IMessageFormatter, MessageFormatter>()
             .AddScoped<ICommandHandlerFactory, CommandHandlerFactory>()
             .AddScoped<ICommandHandler, CreateCommandHandler>()
             .AddScoped<IWorker, Worker>()
