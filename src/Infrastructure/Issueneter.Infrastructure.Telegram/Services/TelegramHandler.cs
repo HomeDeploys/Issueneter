@@ -57,7 +57,7 @@ internal class TelegramHandler
             return $"Error handling message: {parseResult.Error}";
         }
         
-        var command = parseResult.Command!;
+        var command = parseResult.Entity!;
         var handler = _commandHandlerFactory.Get(command);
 
         if (handler is null)

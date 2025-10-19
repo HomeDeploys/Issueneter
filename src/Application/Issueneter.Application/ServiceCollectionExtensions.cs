@@ -11,6 +11,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection serviceCollection)
     {
         serviceCollection
+            .AddSingleton<ICommandParser, CommandParser>()
             .AddScoped<ICommandHandlerFactory, CommandHandlerFactory>()
             .AddScoped<ICommandHandler, CreateCommandHandler>()
             .AddScoped<IWorker, Worker>()
