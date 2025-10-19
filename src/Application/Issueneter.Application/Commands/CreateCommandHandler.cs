@@ -1,4 +1,5 @@
-﻿using Issueneter.Domain.Interfaces.Commands;
+﻿using Issueneter.Application.Commands.Models;
+using Issueneter.Domain.Interfaces.Commands;
 using Issueneter.Domain.Interfaces.Connection;
 using Issueneter.Domain.Interfaces.Filters;
 using Issueneter.Domain.Interfaces.Repos;
@@ -43,27 +44,30 @@ internal class CreateCommandHandler : ICommandHandler
 
     public async Task<string> Handle(Command command, CancellationToken token)
     {
-        // TODO: Maybe change conception: move command parameters parsing to separated step, and keep only validation & logic here
-        var providerParseResult = command.ParseProvider(_providerFactory, out var provider);
+        var createCommandParseResult = CreateCommand.Parse(command);
+
+        if (!createCommandParseResult.IsSuccess)
+        {
+            return createCommandParseResult.Error;
+        }
+
+        var createCommand = createCommandParseResult.Entity!;
+
+        var providerParseResult = createCommand.ParseProvider(_providerFactory, out var provider);
 
         if (!providerParseResult.IsSuccess)
         {
             return providerParseResult.Error;
         }
 
-        var clientParseResult = command.ParseClient(_clientFactory);
+        var clientParseResult = createCommand.ParseClient(_clientFactory);
 
         if (!clientParseResult.IsSuccess)
         {
             return clientParseResult.Error;
         }
 
-        if (!command.Parameters.TryGetValue("Schedule", out var schedule))
-        {
-            return "Missing required parameter: Schedule";
-        }
-
-        var scheduleValidationResult = _scheduler.Validate(schedule);
+        var scheduleValidationResult = _scheduler.Validate(createCommand.Schedule);
 
         if (!scheduleValidationResult.IsSuccess)
         {
@@ -72,12 +76,7 @@ internal class CreateCommandHandler : ICommandHandler
 
         var entity = provider!.GetSample();
 
-        if (!command.Parameters.TryGetValue("Filter", out var filterString))
-        {
-            return "Missing required parameter: Filter";
-        }
-
-        var filterParseResult = _filterParser.Parse(filterString);
+        var filterParseResult = _filterParser.Parse(createCommand.Filter);
 
         if (!filterParseResult.IsSuccess)
         {
@@ -87,27 +86,22 @@ internal class CreateCommandHandler : ICommandHandler
         var filter = filterParseResult.Entity!;
         if (!filter.IsValid(entity))
         {
-            return $"Filter is not valid for this type of entity";
+            return "Filter is not valid for this type of entity";
         }
 
-        if (!command.Parameters.TryGetValue("Template", out var template))
-        {
-            return "Missing required parameter: Template";
-        }
-
-        var messageValidationResult = _messageFormatter.Validate(template, entity);
+        var messageValidationResult = _messageFormatter.Validate(createCommand.Template, entity);
         if (!messageValidationResult.IsSuccess)
         {
-            return $"Invalid template: {template}";
+            return $"Invalid template: {createCommand.Template}";
         }
 
         var config = new WorkerConfiguration(
             WorkerId.Empty,
             providerParseResult.Entity!,
-            schedule,
-            filterString,
+            createCommand.Schedule,
+            createCommand.Filter,
             clientParseResult.Entity!,
-            template);
+            createCommand.Template);
 
         await using var transacton = await _transactionProvider.CreateTransaction(token);
         
@@ -117,7 +111,7 @@ internal class CreateCommandHandler : ICommandHandler
             Id = workerId
         };
 
-        await _scheduler.Schedule(schedule, workerId);
+        await _scheduler.Schedule(config.Schedule, workerId);
         await transacton.Commit(token);
         
         return $"Worker {config.Id} has been created";
