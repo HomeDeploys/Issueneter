@@ -12,7 +12,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetValue<string>("Database:ConnectionString");
+        var connectionString = configuration.GetValue<string>("DbConnectionFactoryConfiguration:ConnectionString");
         services.Configure<DbConnectionFactoryConfiguration>(configuration.GetSection("Database"));
 
         services.AddFluentMigratorCore()

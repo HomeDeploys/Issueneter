@@ -54,12 +54,12 @@ internal class GithubProvider : IEntityProvider
 
         var issues = await _client.GetIssues(owner, repo, fetchSince);
 
-        var maxCreatedAt = issues.Max(i => i.CreatedAt);
+        var maxUpdatedAt = issues.Max(i => i.UpdatedAt);
         snapshot = new GithubFetchSnapshot()
         {
             Owner = owner,
             Repository = repo,
-            LastIssueCreated = maxCreatedAt
+            LastIssueCreated = maxUpdatedAt
         };
 
         // TODO: Transaction
@@ -72,9 +72,11 @@ internal class GithubProvider : IEntityProvider
     {
         return new GithubIssueEntity()
         {
+            Id = 1,
             Author = "Author",
             Body = "Some body",
             CreatedAt = DateTimeOffset.Now,
+            UpdatedAt = DateTimeOffset.Now,
             Labels = ["Label"],
             Title = "Title"
         };
