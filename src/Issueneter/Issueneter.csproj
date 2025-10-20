@@ -14,4 +14,12 @@
     <PackageReference Include="Serilog.Extensions.Hosting" />
     <PackageReference Include="Serilog.Sinks.Console" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="appsettings.Local.yaml">
+      <DependentUpon>appsettings.yaml</DependentUpon>
+    </None>
+    <None Update="appsettings.Example.yaml">
+      <DependentUpon>appsettings.yaml</DependentUpon>
+    </None>
+  </ItemGroup>
 </Project>

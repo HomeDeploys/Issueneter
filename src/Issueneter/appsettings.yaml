@@ -1,9 +1,0 @@
-GithubClientConfiguration:
-  Token: ""
-  PageSize: 100
-  PageLimitPerRun: 10
-  FirstRunFetchLimit: 100
-TelegramClientConfiguration:
-  Token: ""
-DbConnectionFactoryConfiguration:
-  ConnectionString: ""
