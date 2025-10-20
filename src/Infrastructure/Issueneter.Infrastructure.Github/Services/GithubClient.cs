@@ -41,37 +41,40 @@ internal class GithubClient
         // TODO: Rate limiter handler
         while (startPage < _configuration.PageLimitPerRun)
         {
-            var issues = await _client.Issue.GetAllForRepository(owner, repo, new RepositoryIssueRequest()
-            {
-                Since = since,
-                SortDirection = SortDirection.Descending,
-                SortProperty = IssueSort.Created,
-            }, new ApiOptions()
+            var events = await _client.Activity.Events.GetAllForRepository(owner, repo, new ApiOptions()
             {
                 PageSize = _configuration.PageSize,
                 StartPage = startPage
             });
 
-            domainIssues.AddRange(issues.Select(ToDomain));
+            domainIssues.AddRange(events.Where(IsIssueActivity).Select(ToDomain));
 
-            if (isFirstRun || issues.Count < _configuration.PageSize)
+            if (isFirstRun || events.Any(e => e.CreatedAt >= since))
             {
                 break;
             }
         }
-
+        
+        //TODO: Merge events for same issue
         return domainIssues;
     }
 
-    private GithubIssueEntity ToDomain(Issue issue)
+    private static bool IsIssueActivity(Activity activity) => activity is { Type: "IssuesEvent", Payload: IssueEventPayload { Action: "created" or "labeled"} };
+    
+    private GithubIssueEntity ToDomain(Activity activity)
     {
+        var issueEvent = (IssueEventPayload)activity.Payload;
         return new GithubIssueEntity()
         {
-            Author = issue.User.Login,
-            Title = issue.Title,
-            Body = issue.Body,
-            CreatedAt = issue.CreatedAt,
-            Labels = issue.Labels.Select(l => l.Name).ToList(),
+            Id = issueEvent.Issue.Id,
+            Author = issueEvent.Issue.User.Login,
+            Title = issueEvent.Issue.Title,
+            Body = issueEvent.Issue.Body,
+            CreatedAt = issueEvent.Issue.CreatedAt,
+            UpdatedAt = activity.CreatedAt,
+            Labels = issueEvent.Action == "labeled" 
+                ? issueEvent.Issue.Labels.Select(l => l.Name).Reverse().Take(1).ToList()
+                : issueEvent.Issue.Labels.Select(l => l.Name).ToList()
         };
     }
 }
