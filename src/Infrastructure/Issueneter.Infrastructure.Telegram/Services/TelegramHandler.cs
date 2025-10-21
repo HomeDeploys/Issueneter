@@ -1,6 +1,8 @@
 ﻿using System.Text;
 using Issueneter.Domain.Interfaces.Commands;
 using Issueneter.Infrastructure.Telegram.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -13,18 +15,20 @@ internal class TelegramHandler
     private readonly TelegramBotClient _client;
     private readonly CancellationTokenSource _tokenSource;
     private readonly ICommandParser _commandParser;
-    // TODO: Create scope and resolve from it
-    private readonly ICommandHandlerFactory _commandHandlerFactory;
+    private readonly IServiceScopeFactory _scopeFactory;
+    private readonly ILogger<TelegramHandler> _logger;
 
     public TelegramHandler(
         IOptions<TelegramClientConfiguration> configuration,
         ICommandParser commandParser, 
-        ICommandHandlerFactory commandHandlerFactory)
+        IServiceScopeFactory scopeFactory, 
+        ILogger<TelegramHandler> logger)
     {
         _tokenSource = new CancellationTokenSource();
         _client = new TelegramBotClient(configuration.Value.Token, cancellationToken: _tokenSource.Token);
         _commandParser = commandParser;
-        _commandHandlerFactory = commandHandlerFactory;
+        _scopeFactory = scopeFactory;
+        _logger = logger;
     }
 
     public void Start()
@@ -42,9 +46,16 @@ internal class TelegramHandler
     {
         if (type != UpdateType.Message) return;
         if (string.IsNullOrEmpty(message.Text)) return;
-        
-        var reply = await HandleMessage(message.Text, _tokenSource.Token);
-        await _client.SendMessage(message.Chat.Id, reply, messageThreadId: message.MessageThreadId);
+
+        try
+        {
+            var reply = await HandleMessage(message.Text, _tokenSource.Token);
+            await _client.SendMessage(message.Chat.Id, reply, messageThreadId: message.MessageThreadId);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error while handling message {messageText}", message.Text);
+        }
     }
 
     // TODO: Error handling
@@ -58,8 +69,11 @@ internal class TelegramHandler
         }
         
         var command = parseResult.Entity!;
-        var handler = _commandHandlerFactory.Get(command);
-
+        using var scope = _scopeFactory.CreateScope();
+        
+        var factory = scope.ServiceProvider.GetRequiredService<ICommandHandlerFactory>();
+        var handler = factory.Get(command);
+        
         if (handler is null)
         {
             return $"No handler exists for command {command.Name}";

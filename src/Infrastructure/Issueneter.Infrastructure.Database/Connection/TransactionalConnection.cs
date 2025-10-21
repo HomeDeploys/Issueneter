@@ -13,5 +13,5 @@ internal class TransactionalConnection : AbstractConnection
 
     protected override DbConnection Connection => _transaction.Connection!;
 
-    public override ValueTask DisposeAsync() => _transaction.DisposeAsync();
+    public override ValueTask DisposeAsync() => ValueTask.CompletedTask;
 }

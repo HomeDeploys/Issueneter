@@ -5,5 +5,5 @@ GithubClientConfiguration:
   FirstRunFetchLimit: 100
 TelegramClientConfiguration:
   Token: ""
-DbConnectionFactoryConfiguration:
+Database:
   ConnectionString: ""

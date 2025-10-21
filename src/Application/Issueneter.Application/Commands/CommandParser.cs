@@ -14,7 +14,7 @@ internal class CommandParser : ICommandParser
             return ParseResult<Command>.Fail("Command is empty");
         }
         
-        var lines = command.Split(Environment.NewLine);
+        var lines = command.Split('\n');
         var commandName = lines[0].Trim();
         var arguments = new Dictionary<string, string>();
         

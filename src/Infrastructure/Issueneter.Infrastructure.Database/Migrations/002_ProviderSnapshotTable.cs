@@ -2,7 +2,8 @@
 
 namespace Issueneter.Infrastructure.Database.Migrations;
 
-internal class ProviderSnapshotTable : Migration {
+[Migration(002)]
+public class ProviderSnapshotTable : Migration {
     
     public override void Up()
     {
@@ -10,7 +11,7 @@ internal class ProviderSnapshotTable : Migration {
             CREATE TABLE IF NOT EXISTS provider_snapshot(
                 worker_id bigint not null primary key,
                 data jsonb
-            )
+            );
         """);
     }
 

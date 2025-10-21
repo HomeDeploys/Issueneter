@@ -47,16 +47,18 @@ internal class GithubClient
                 StartPage = startPage
             });
 
-            domainIssues.AddRange(events.Where(IsIssueActivity).Select(ToDomain));
+            var filteredEvents = events.Where(IsIssueActivity).Where(c => c.CreatedAt > since).Select(ToDomain);
+            domainIssues.AddRange(filteredEvents);
 
-            if (isFirstRun || events.Any(e => e.CreatedAt >= since))
+            if (isFirstRun || events.Any(e => e.CreatedAt <= since))
             {
                 break;
             }
         }
-        
-        //TODO: Merge events for same issue
-        return domainIssues;
+
+        return domainIssues.GroupBy(i => i.Id)
+            .Select(Merge)
+            .ToList();
     }
 
     private static bool IsIssueActivity(Activity activity) => activity is { Type: "IssuesEvent", Payload: IssueEventPayload { Action: "created" or "labeled"} };
@@ -76,5 +78,20 @@ internal class GithubClient
                 ? issueEvent.Issue.Labels.Select(l => l.Name).Reverse().Take(1).ToList()
                 : issueEvent.Issue.Labels.Select(l => l.Name).ToList()
         };
+    }
+
+    private GithubIssueEntity Merge(IEnumerable<GithubIssueEntity> issues)
+    {
+        var latestIssue = issues.MaxBy(i => i.UpdatedAt)!;
+        return new GithubIssueEntity()
+        {
+            Id = latestIssue.Id,
+            Author = latestIssue.Author,
+            Title = latestIssue.Title,
+            Body = latestIssue.Body,
+            CreatedAt = latestIssue.CreatedAt,
+            UpdatedAt = latestIssue.UpdatedAt,
+            Labels = issues.SelectMany(i => i.Labels).Distinct().ToList()
+        }; 
     }
 }

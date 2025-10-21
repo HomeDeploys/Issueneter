@@ -12,7 +12,8 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetValue<string>("DbConnectionFactoryConfiguration:ConnectionString");
+        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+        var connectionString = configuration.GetValue<string>("Database:ConnectionString");
         services.Configure<DbConnectionFactoryConfiguration>(configuration.GetSection("Database"));
 
         services.AddFluentMigratorCore()

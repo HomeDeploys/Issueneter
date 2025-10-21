@@ -18,14 +18,19 @@ internal class ProviderSnapshotRepo : IProviderSnapshotRepo
 
     public async Task<T?> GetLastSnapshot<T>(WorkerId workerId, CancellationToken token) where T : class
     {
+        var parameters = new
+        {
+            WorkerId = workerId.Value
+        };
+        
         const string query = $"""
             select data
             from {TableName}
-            where worker_id = @{nameof(workerId)} 
+            where worker_id = @{nameof(parameters.WorkerId)} 
         """;
 
         await using var connection = await _connectionFactory.GetConnection(token);
-        var data = await connection.QuerySingleOrDefault<string>(query, new { workerId });
+        var data = await connection.QuerySingleOrDefault<string>(query, parameters);
         return data?.DeserializeSnakeCase<T>();
     }
 
@@ -33,13 +38,13 @@ internal class ProviderSnapshotRepo : IProviderSnapshotRepo
     {
         var parameters = new
         {
-            WorkerId = workerId,
+            WorkerId = workerId.Value,
             Data = snapshot.SerializeSnakeCase()
         };
 
         const string query = $"""
             insert into {TableName}
-            values (@{nameof(parameters.WorkerId)}, @{nameof(parameters.Data)})
+            values (@{nameof(parameters.WorkerId)}, @{nameof(parameters.Data)}::jsonb)
             on conflict (worker_id) 
             do update set
                 data = excluded.data

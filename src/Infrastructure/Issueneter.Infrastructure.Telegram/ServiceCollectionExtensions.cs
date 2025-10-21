@@ -18,4 +18,9 @@ public static class ServiceCollectionExtensions
             .AddSingleton<TelegramHandler>()
             .AddScoped<IClient, TelegramClient>();
     }
+
+    public static void RunTelegramHandler(this IServiceProvider serviceProvider)
+    {
+        serviceProvider.GetRequiredService<TelegramHandler>().Start();
+    }
 }

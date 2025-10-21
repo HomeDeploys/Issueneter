@@ -15,7 +15,7 @@
     <PackageReference Include="Serilog.Sinks.Console" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="appsettings.Local.yaml">
+    <None Update="appsettings.Development.yaml">
       <DependentUpon>appsettings.yaml</DependentUpon>
     </None>
     <None Update="appsettings.Example.yaml">

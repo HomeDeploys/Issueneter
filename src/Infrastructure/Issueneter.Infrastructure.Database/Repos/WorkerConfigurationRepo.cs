@@ -51,7 +51,7 @@ internal class WorkerConfigurationRepo : IWorkerConfigurationRepo
             @{nameof(dto.Filter)},
             @{nameof(dto.ClientType)},
             @{nameof(dto.ClientTarget)},
-            @{nameof(dto.Template)},
+            @{nameof(dto.Template)}
           ) RETURNING worker_id;
           """;
 

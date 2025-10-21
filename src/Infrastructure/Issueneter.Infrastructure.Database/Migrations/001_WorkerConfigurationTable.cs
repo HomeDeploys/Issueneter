@@ -15,8 +15,8 @@ public class WorkerConfigurationTable : Migration {
                 filter text not null,
                 client_type smallint not null,
                 client_target text not null,
-                template text not null,
-            )
+                template text not null
+            );
         """);
     }
 

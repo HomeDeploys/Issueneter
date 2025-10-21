@@ -38,6 +38,10 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-app.Services.RunMigrations();
+using (var scope = app.Services.CreateScope())
+{
+    scope.ServiceProvider.RunMigrations();
+}
 
+app.Services.RunTelegramHandler();
 app.Run();

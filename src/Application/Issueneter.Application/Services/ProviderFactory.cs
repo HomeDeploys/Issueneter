@@ -6,16 +6,15 @@ namespace Issueneter.Application.Services;
 
 internal class ProviderFactory : IProviderFactory
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IEnumerable<IEntityProvider> _providers;
 
-    public ProviderFactory(IServiceProvider serviceProvider)
+    public ProviderFactory(IEnumerable<IEntityProvider> providers)
     {
-        _serviceProvider = serviceProvider;
+        _providers = providers;
     }
 
     public IEntityProvider? Get(ProviderType providerType)
     {
-        var providers = _serviceProvider.GetServices<IEntityProvider>();
-        return providers.FirstOrDefault(p => p.Type == providerType);
+        return _providers.FirstOrDefault(p => p.Type == providerType);
     }
 }

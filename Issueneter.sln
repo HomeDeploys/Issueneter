@@ -29,6 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{FC4976
 		Directory.Build.props = Directory.Build.props
 		Directory.Built.targets = Directory.Built.targets
 		Directory.Packages.props = Directory.Packages.props
+		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Issueneter.Infrastructure.Github", "src\Infrastructure\Issueneter.Infrastructure.Github\Issueneter.Infrastructure.Github.csproj", "{0C24F120-E1BB-45CE-943A-8B0A57B9F9AC}"

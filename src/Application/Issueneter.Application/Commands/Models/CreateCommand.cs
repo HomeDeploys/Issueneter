@@ -13,7 +13,7 @@ internal record CreateCommand(
     string ClientTarget,
     string Template)
 {
-    private static readonly string[] Fields = typeof(CreateCommand).GetFields().Select(x => x.Name).ToArray();
+    private static readonly string[] Fields = typeof(CreateCommand).GetProperties().Select(x => x.Name).ToArray();
     
     public static ParseResult<CreateCommand> Parse(Command command)
     {

@@ -6,16 +6,15 @@ namespace Issueneter.Application.Services;
 
 internal class ClientFactory : IClientFactory
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IEnumerable<IClient> _clients;
 
-    public ClientFactory(IServiceProvider serviceProvider)
+    public ClientFactory(IEnumerable<IClient> clients)
     {
-        _serviceProvider = serviceProvider;
+        _clients = clients;
     }
 
     public IClient? Get(ClientType clientType)
     {
-        var clients = _serviceProvider.GetServices<IClient>();
-        return clients.FirstOrDefault(client => client.Type == clientType);
+        return _clients.FirstOrDefault(client => client.Type == clientType);
     }
 }
