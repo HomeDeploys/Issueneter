@@ -54,7 +54,9 @@ internal class GithubProvider : IEntityProvider
 
         var issues = await _client.GetIssues(owner, repo, fetchSince);
 
-        var maxUpdatedAt = issues.Max(i => i.UpdatedAt);
+        var maxUpdatedAt = issues.Count > 0
+            ? issues.Max(i => i.UpdatedAt)
+            : DateTimeOffset.UtcNow;
         snapshot = new GithubFetchSnapshot()
         {
             Owner = owner,
@@ -75,6 +77,7 @@ internal class GithubProvider : IEntityProvider
             Id = 1,
             Author = "Author",
             Body = "Some body",
+            Url = "github.com",
             CreatedAt = DateTimeOffset.Now,
             UpdatedAt = DateTimeOffset.Now,
             Labels = ["Label"],

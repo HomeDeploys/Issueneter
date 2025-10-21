@@ -36,6 +36,7 @@ internal class Worker : IWorker
     {
         try
         {
+            _logger.LogInformation("Executing worker {workerId}", workerId);
             var config = await _configurationRepo.Get(workerId, token)
                             ?? throw new NotFoundException($"Worker {workerId} not found");
             var provider = _providerFactory.Get(config.ProviderInfo.Type) 
@@ -65,6 +66,7 @@ internal class Worker : IWorker
                 await client.Send(config.ClientInfo.Target, message, token);
             }
             
+            _logger.LogInformation("Finish executing worker {workerId}", workerId);
         }
         catch (Exception e)
         {

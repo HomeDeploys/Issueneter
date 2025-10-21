@@ -50,14 +50,16 @@ internal class GithubClient
             var filteredEvents = events.Where(IsIssueActivity).Where(c => c.CreatedAt > since).Select(ToDomain);
             domainIssues.AddRange(filteredEvents);
 
-            if (isFirstRun || events.Any(e => e.CreatedAt <= since))
+            if (isFirstRun || events.Any(e => e.CreatedAt <= since) || events.Count() < _configuration.PageSize)
             {
                 break;
             }
+
+            startPage++;
         }
 
         return domainIssues.GroupBy(i => i.Id)
-            .Select(Merge)
+            .Select(g => g.MaxBy(i => i.CreatedAt)!)
             .ToList();
     }
 
@@ -72,26 +74,11 @@ internal class GithubClient
             Author = issueEvent.Issue.User.Login,
             Title = issueEvent.Issue.Title,
             Body = issueEvent.Issue.Body,
+            Url = issueEvent.Issue.HtmlUrl,
             CreatedAt = issueEvent.Issue.CreatedAt,
             UpdatedAt = activity.CreatedAt,
-            Labels = issueEvent.Action == "labeled" 
-                ? issueEvent.Issue.Labels.Select(l => l.Name).Reverse().Take(1).ToList()
-                : issueEvent.Issue.Labels.Select(l => l.Name).ToList()
+            // TODO: Keep only added labels
+            Labels = issueEvent.Issue.Labels.Select(l => l.Name).ToList()
         };
-    }
-
-    private GithubIssueEntity Merge(IEnumerable<GithubIssueEntity> issues)
-    {
-        var latestIssue = issues.MaxBy(i => i.UpdatedAt)!;
-        return new GithubIssueEntity()
-        {
-            Id = latestIssue.Id,
-            Author = latestIssue.Author,
-            Title = latestIssue.Title,
-            Body = latestIssue.Body,
-            CreatedAt = latestIssue.CreatedAt,
-            UpdatedAt = latestIssue.UpdatedAt,
-            Labels = issues.SelectMany(i => i.Labels).Distinct().ToList()
-        }; 
     }
 }

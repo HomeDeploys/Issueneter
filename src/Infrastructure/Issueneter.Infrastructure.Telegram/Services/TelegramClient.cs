@@ -6,6 +6,7 @@ using Issueneter.Domain.ValueObjects;
 using Issueneter.Infrastructure.Telegram.Configuration;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
+using Telegram.Bot.Types.Enums;
 
 namespace Issueneter.Infrastructure.Telegram.Services;
 
@@ -52,6 +53,6 @@ internal partial class TelegramClient : IClient
             threadId = int.Parse(match.Groups["threadId"].Value);
         }
         
-        await _client.SendMessage(chatId, message, messageThreadId: threadId, cancellationToken: token);
+        await _client.SendMessage(chatId, message, ParseMode.Markdown, messageThreadId: threadId, cancellationToken: token);
     }
 }
