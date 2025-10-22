@@ -1,5 +1,4 @@
-﻿using Issueneter.Domain.Interfaces.Services;
-using Issueneter.Domain.Models;
+﻿using Issueneter.Domain.Models;
 using Issueneter.Domain.ValueObjects;
 
 namespace Issueneter.Application.Commands.Models;
@@ -13,7 +12,7 @@ internal record CreateCommand(
     string ClientTarget,
     string Template)
 {
-    private static readonly string[] Fields = typeof(CreateCommand).GetProperties().Select(x => x.Name).ToArray();
+    private static readonly HashSet<string> Fields = typeof(CreateCommand).GetProperties().Select(x => x.Name).ToHashSet();
     
     public static ParseResult<CreateCommand> Parse(Command command)
     {
@@ -22,6 +21,14 @@ internal record CreateCommand(
             if (!command.Parameters.ContainsKey(field))
             {
                 return ParseResult<CreateCommand>.Fail($"Missing required parameter {field}");
+            }
+        }
+
+        foreach (var parameter in command.Parameters.Keys)
+        {
+            if (!Fields.Contains(parameter))
+            {
+                return ParseResult<CreateCommand>.Fail($"Invalid parameter {parameter}");
             }
         }
 
@@ -34,15 +41,5 @@ internal record CreateCommand(
             ClientTarget: command.Parameters[nameof(ClientTarget)],
             Template: command.Parameters[nameof(Template)]
         ));
-    }
-
-    public ParseResult<ProviderInfo> ParseProvider(IProviderFactory factory, out IEntityProvider? provider)
-    {
-        return CommandHelpers.ParseProvider(ProviderType, ProviderTarget, factory, out provider);
-    }
-    
-    public ParseResult<ClientInfo> ParseClient(IClientFactory factory)
-    {
-        return CommandHelpers.ParseClient(ClientType, ClientTarget, factory);
     }
 }

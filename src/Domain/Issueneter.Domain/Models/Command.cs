@@ -1,3 +1,5 @@
-﻿namespace Issueneter.Domain.Models;
+﻿using Issueneter.Domain.ValueObjects;
 
-public record Command(string Name, IReadOnlyDictionary<string, string> Parameters);
+namespace Issueneter.Domain.Models;
+
+public record Command(string Name, WorkerId WorkerId, IReadOnlyDictionary<string, string> Parameters);

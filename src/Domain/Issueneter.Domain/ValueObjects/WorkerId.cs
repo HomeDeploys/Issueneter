@@ -32,6 +32,16 @@ public readonly struct WorkerId
         return this;
     }
 
+    public static bool operator ==(WorkerId left, WorkerId right)
+    {
+        return left.Value == right.Value;
+    }
+
+    public static bool operator !=(WorkerId left, WorkerId right)
+    {
+        return left.Value != right.Value;
+    }
+    
     public override bool Equals([NotNullWhen(true)] object? obj)
     {
         if (obj is not WorkerId other)

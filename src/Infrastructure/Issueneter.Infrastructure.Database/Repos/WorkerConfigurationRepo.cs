@@ -36,7 +36,7 @@ internal class WorkerConfigurationRepo : IWorkerConfigurationRepo
         var dto = WorkerConfigurationDto.FromDomain(configuration);
 
         const string query = $"""
-          INSERT INTO worker_configuration(
+          INSERT INTO {TableName}(
             provider_type,
             provider_target,
             schedule,
@@ -58,5 +58,24 @@ internal class WorkerConfigurationRepo : IWorkerConfigurationRepo
         await using var connection = await _connectionFactory.GetConnection(token);
         var id = await connection.QuerySingleOrDefault<long>(query, dto);
         return new WorkerId(id);
+    }
+
+    public async Task Update(WorkerConfiguration configuration, CancellationToken token)
+    {
+        var dto = WorkerConfigurationDto.FromDomain(configuration);
+        
+        const string query = $"""
+          UPDATE {TableName} SET
+            provider_type =  @{nameof(dto.ProviderType)},
+            provider_target = @{nameof(dto.ProviderTarget)},
+            schedule = @{nameof(dto.Schedule)},
+            filter = @{nameof(dto.Filter)},                               
+            client_type =  @{nameof(dto.ClientType)},                               
+            client_target = @{nameof(dto.ClientTarget)},
+            template =  @{nameof(dto.Template)};
+          """;
+        
+        await using var connection = await _connectionFactory.GetConnection(token);
+        await connection.Execute(query, dto);
     }
 }
