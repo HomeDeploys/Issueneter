@@ -95,6 +95,16 @@ public partial class QueryParser : Parser {
 		}
 		public override int RuleIndex { get { return RULE_query; } }
 		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IQueryListener typedListener = listener as IQueryListener;
+			if (typedListener != null) typedListener.EnterQuery(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IQueryListener typedListener = listener as IQueryListener;
+			if (typedListener != null) typedListener.ExitQuery(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IQueryVisitor<TResult> typedVisitor = visitor as IQueryVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitQuery(this);
@@ -138,6 +148,16 @@ public partial class QueryParser : Parser {
 		{
 		}
 		public override int RuleIndex { get { return RULE_expr; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IQueryListener typedListener = listener as IQueryListener;
+			if (typedListener != null) typedListener.EnterExpr(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IQueryListener typedListener = listener as IQueryListener;
+			if (typedListener != null) typedListener.ExitExpr(this);
+		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IQueryVisitor<TResult> typedVisitor = visitor as IQueryVisitor<TResult>;
@@ -205,6 +225,16 @@ public partial class QueryParser : Parser {
 		{
 		}
 		public override int RuleIndex { get { return RULE_binaryOp; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IQueryListener typedListener = listener as IQueryListener;
+			if (typedListener != null) typedListener.EnterBinaryOp(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IQueryListener typedListener = listener as IQueryListener;
+			if (typedListener != null) typedListener.ExitBinaryOp(this);
+		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IQueryVisitor<TResult> typedVisitor = visitor as IQueryVisitor<TResult>;
@@ -283,6 +313,16 @@ public partial class QueryParser : Parser {
 		}
 		public override int RuleIndex { get { return RULE_unaryOp; } }
 		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IQueryListener typedListener = listener as IQueryListener;
+			if (typedListener != null) typedListener.EnterUnaryOp(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IQueryListener typedListener = listener as IQueryListener;
+			if (typedListener != null) typedListener.ExitUnaryOp(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IQueryVisitor<TResult> typedVisitor = visitor as IQueryVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitUnaryOp(this);
@@ -338,6 +378,16 @@ public partial class QueryParser : Parser {
 		}
 		public override int RuleIndex { get { return RULE_nameToken; } }
 		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IQueryListener typedListener = listener as IQueryListener;
+			if (typedListener != null) typedListener.EnterNameToken(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IQueryListener typedListener = listener as IQueryListener;
+			if (typedListener != null) typedListener.ExitNameToken(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IQueryVisitor<TResult> typedVisitor = visitor as IQueryVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitNameToken(this);
@@ -376,6 +426,16 @@ public partial class QueryParser : Parser {
 		{
 		}
 		public override int RuleIndex { get { return RULE_valueToken; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IQueryListener typedListener = listener as IQueryListener;
+			if (typedListener != null) typedListener.EnterValueToken(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IQueryListener typedListener = listener as IQueryListener;
+			if (typedListener != null) typedListener.ExitValueToken(this);
+		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IQueryVisitor<TResult> typedVisitor = visitor as IQueryVisitor<TResult>;

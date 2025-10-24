@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\src\Application\Issueneter.Application.Filters\Issueneter.Application.Filters.csproj" />
+      <ProjectReference Include="..\src\Issueneter\Issueneter.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="FluentAssertions" />
+      <PackageReference Include="Microsoft.NET.Test.Sdk" />
+      <PackageReference Include="NUnit" />
+      <PackageReference Include="NUnit3TestAdapter" />
+      <PackageReference Include="NUnit.Analyzers" />
+    </ItemGroup>
+
+</Project>

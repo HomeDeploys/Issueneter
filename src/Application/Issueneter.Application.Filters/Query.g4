@@ -1,4 +1,4 @@
-﻿grammar Query;
+grammar Query;
 
 // --- Parser rules ---
 
@@ -33,7 +33,7 @@ nameToken
     ;
 
 NAME
-    : [a-zA-Z0-9]+
+    : [a-zA-Z][a-zA-Z0-9]*
     ;
 
 // Value tokens: string or number

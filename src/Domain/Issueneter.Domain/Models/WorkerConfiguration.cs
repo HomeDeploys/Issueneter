@@ -1,5 +1,4 @@
-﻿using Issueneter.Domain.Enums;
-using Issueneter.Domain.ValueObjects;
+﻿using Issueneter.Domain.ValueObjects;
 
 namespace Issueneter.Domain.Models;
 
