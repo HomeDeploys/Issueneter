@@ -7,7 +7,7 @@ using Issueneter.Domain.Interfaces.Services;
 using Issueneter.Domain.Models;
 using Issueneter.Domain.ValueObjects;
 
-namespace Issueneter.Application.Commands;
+namespace Issueneter.Application.Commands.Handlers;
 
 internal class UpdateCommandHandler : ICommandHandler
 {
@@ -26,12 +26,12 @@ internal class UpdateCommandHandler : ICommandHandler
 
     public bool CanHandle(Command command)
     {
-        return command.Name == "Update";
+        return command.Name.Equals("update", StringComparison.InvariantCultureIgnoreCase);
     }
 
     public async Task<string> Handle(Command command, CancellationToken token)
     {
-        if (command.WorkerId == WorkerId.Empty)
+        if (command.WorkerId.IsEmpty())
         {
             return "WorkerId is required for Update command";
         }

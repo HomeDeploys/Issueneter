@@ -39,10 +39,10 @@ internal record UpdateCommand(
 
         return ParseResult<UpdateCommand>.Success(new UpdateCommand(
             ProviderTarget: command.Parameters.GetValueOrDefault(nameof(ProviderTarget)),
-            Schedule: command.Parameters[nameof(Schedule)],
-            Filter: command.Parameters[nameof(Filter)],
-            ClientTarget: command.Parameters[nameof(ClientTarget)],
-            Template: command.Parameters[nameof(Template)]
+            Schedule: command.Parameters.GetValueOrDefault(nameof(Schedule)),
+            Filter: command.Parameters.GetValueOrDefault(nameof(Filter)),
+            ClientTarget: command.Parameters.GetValueOrDefault(nameof(ClientTarget)),
+            Template: command.Parameters.GetValueOrDefault(nameof(Template))
         ));
     }
 }

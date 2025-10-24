@@ -28,9 +28,9 @@ internal partial class CommandParser : ICommandParser
 
         var commandName = commandNameMatch.Groups["name"].Value;
         var workerId = WorkerId.Empty;
-        if (commandNameMatch.Groups.TryGetValue("workerId", out var workerIdGroup))
+        if (commandNameMatch.Groups["workerId"].Success)
         {
-            workerId = new WorkerId(long.Parse(workerIdGroup.Value));
+            workerId = new WorkerId(long.Parse(commandNameMatch.Groups["workerId"].Value));
         }
         var arguments = new Dictionary<string, string>();
         

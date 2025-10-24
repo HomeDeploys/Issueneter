@@ -9,7 +9,7 @@ using Issueneter.Domain.Interfaces.Services;
 using Issueneter.Domain.Models;
 using Issueneter.Domain.ValueObjects;
 
-namespace Issueneter.Application.Commands;
+namespace Issueneter.Application.Commands.Handlers;
 
 internal class CreateCommandHandler : ICommandHandler
 {

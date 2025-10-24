@@ -1,4 +1,5 @@
 ﻿using Issueneter.Application.Commands;
+using Issueneter.Application.Commands.Handlers;
 using Issueneter.Application.Services;
 using Issueneter.Domain.Interfaces.Commands;
 using Issueneter.Domain.Interfaces.Services;
@@ -10,16 +11,22 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection serviceCollection)
     {
-        serviceCollection
+        return serviceCollection
             .AddSingleton<ICommandParser, CommandParser>()
             .AddSingleton<IMessageFormatter, MessageFormatter>()
             .AddScoped<WorkerConfigurationValidator>()
             .AddScoped<ICommandHandlerFactory, CommandHandlerFactory>()
-            .AddScoped<ICommandHandler, CreateCommandHandler>()
             .AddScoped<IWorker, Worker>()
             .AddScoped<IClientFactory, ClientFactory>()
-            .AddScoped<IProviderFactory, ProviderFactory>();
+            .AddScoped<IProviderFactory, ProviderFactory>()
+            .AddCommandHandlers();
+    }
 
-        return serviceCollection;
+    private static IServiceCollection AddCommandHandlers(this IServiceCollection serviceCollection)
+    {
+        return serviceCollection
+            .AddScoped<ICommandHandler, CreateCommandHandler>()
+            .AddScoped<ICommandHandler, UpdateCommandHandler>()
+            .AddScoped<ICommandHandler, GetCommandHandler>();
     }
 }

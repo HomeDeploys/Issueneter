@@ -32,6 +32,8 @@ public readonly struct WorkerId
         return this;
     }
 
+    public bool IsEmpty() => Value < 0;
+
     public static bool operator ==(WorkerId left, WorkerId right)
     {
         return left.Value == right.Value;
