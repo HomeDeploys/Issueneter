@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Issueneter.Domain.Interfaces.Commands;
+﻿using Issueneter.Domain.Interfaces.Commands;
 using Issueneter.Infrastructure.Telegram.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

@@ -1,6 +1,5 @@
 ﻿using Issueneter.Domain.Enums;
 using Issueneter.Domain.Interfaces.Services;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Issueneter.Application.Services;
 

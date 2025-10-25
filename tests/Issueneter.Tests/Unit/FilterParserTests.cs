@@ -1,5 +1,5 @@
 using FluentAssertions;
-using Issueneter.Application.Parser;
+using Issueneter.Application.Parser.Parser;
 using Issueneter.Application.Parser.Unary;
 using Issueneter.Tests.Setup;
 using Xunit;

@@ -1,4 +1,5 @@
-﻿using Issueneter.Domain.Interfaces.Filters;
+﻿using Issueneter.Application.Parser.Parser;
+using Issueneter.Domain.Interfaces.Filters;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Issueneter.Application.Parser;

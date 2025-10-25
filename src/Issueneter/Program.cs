@@ -29,7 +29,7 @@ builder.Services
     .AddApplicationServices()
     .AddFilters();
 
-builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console().MinimumLevel.Debug());
+builder.Host.UseSerilog((_, lc) => lc.WriteTo.Console().MinimumLevel.Debug());
 
 var app = builder.Build();
 

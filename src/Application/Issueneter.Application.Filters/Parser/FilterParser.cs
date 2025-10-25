@@ -1,10 +1,9 @@
 ﻿using Antlr4.Runtime;
 using Issueneter.Application.Parser.Unary;
-using Issueneter.Common.Exceptions;
 using Issueneter.Domain.Interfaces.Filters;
 using Issueneter.Domain.ValueObjects;
 
-namespace Issueneter.Application.Parser;
+namespace Issueneter.Application.Parser.Parser;
 
 internal class FilterParser : IFilterParser
 {

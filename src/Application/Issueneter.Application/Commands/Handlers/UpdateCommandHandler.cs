@@ -5,7 +5,6 @@ using Issueneter.Domain.Interfaces.Connection;
 using Issueneter.Domain.Interfaces.Repos;
 using Issueneter.Domain.Interfaces.Services;
 using Issueneter.Domain.Models;
-using Issueneter.Domain.ValueObjects;
 
 namespace Issueneter.Application.Commands.Handlers;
 

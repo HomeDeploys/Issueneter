@@ -3,7 +3,7 @@ using Issueneter.Application.Parser.Binary;
 using Issueneter.Application.Parser.Unary;
 using Issueneter.Domain.Interfaces.Filters;
 
-namespace Issueneter.Application.Parser;
+namespace Issueneter.Application.Parser.Parser;
 
 internal class FilterBuilder : QueryBaseVisitor<IFilter>
 {
