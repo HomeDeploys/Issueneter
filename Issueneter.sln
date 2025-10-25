@@ -30,6 +30,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{FC4976
 		Directory.Built.targets = Directory.Built.targets
 		Directory.Packages.props = Directory.Packages.props
 		docker-compose.yml = docker-compose.yml
+		AiCodestyle.md = AiCodestyle.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Issueneter.Infrastructure.Github", "src\Infrastructure\Issueneter.Infrastructure.Github\Issueneter.Infrastructure.Github.csproj", "{0C24F120-E1BB-45CE-943A-8B0A57B9F9AC}"
@@ -38,7 +39,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Issueneter.Application.Filt
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{946D03F2-FE99-46A7-85E4-CEA7D5AEF769}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Issueneter.Tests", "Issueneter.Tests\Issueneter.Tests.csproj", "{1E3FF555-DF66-4F51-B01E-745EFF992500}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Issueneter.Tests", "tests\Issueneter.Tests\Issueneter.Tests.csproj", "{1E3FF555-DF66-4F51-B01E-745EFF992500}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

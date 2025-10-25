@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+      <PackageReference Include="Bogus" />
+      <PackageReference Include="FluentAssertions" />
+      <PackageReference Include="Microsoft.NET.Test.Sdk" />
+      <PackageReference Include="NUnit" />
+      <PackageReference Include="NUnit3TestAdapter" />
+      <PackageReference Include="NUnit.Analyzers" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\Application\Issueneter.Application.Filters\Issueneter.Application.Filters.csproj" />
+      <ProjectReference Include="..\..\src\Issueneter\Issueneter.csproj" />
+    </ItemGroup>
+</Project>
