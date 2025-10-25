@@ -57,7 +57,7 @@
 
 ## Tests code style
 
-* Every test must be named with pattern `Action_Should_Outcome`
+* Every test must be named with pattern `Action_Should_Outcome` or `Action_Should_Outcome_When_Precondition`
 * Every test must contain Arrange Act Assert comments
 * Every test must check outcome using FluentAssertions
 * Every test that requires random fake data must use Bogus Faker

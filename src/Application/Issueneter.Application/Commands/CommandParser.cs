@@ -7,7 +7,7 @@ namespace Issueneter.Application.Commands;
 
 internal partial class CommandParser : ICommandParser
 {
-    [GeneratedRegex(@"(?<name>[a-zA-Z]+)( (?<workerId>[0-9]+))?")]
+    [GeneratedRegex(@"^(?<name>[a-zA-Z]+)( (?<workerId>[0-9]+))?$")]
     private static partial Regex CommandNameRegex();
     
     public ParseResult<Command> Parse(string command)
@@ -18,7 +18,7 @@ internal partial class CommandParser : ICommandParser
             return ParseResult<Command>.Fail("Command is empty");
         }
         
-        var lines = command.Split('\n');
+        var lines = command.Split(["\r\n", "\r", "\n"], StringSplitOptions.RemoveEmptyEntries);
         var commandNameMatch = CommandNameRegex().Match(lines[0]);
 
         if (!commandNameMatch.Success)
@@ -36,6 +36,11 @@ internal partial class CommandParser : ICommandParser
         
         foreach (var line in lines.Skip(1))
         {
+            if (string.IsNullOrWhiteSpace(line))
+            {
+                continue;
+            }
+            
             var arg = line.Split(':', 2);
             if (arg.Length != 2)
             {
