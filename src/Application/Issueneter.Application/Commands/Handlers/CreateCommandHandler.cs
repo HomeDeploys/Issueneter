@@ -1,4 +1,4 @@
-﻿using Issueneter.Application.Commands.Models;
+using Issueneter.Application.Commands.Models;
 using Issueneter.Application.Services;
 using Issueneter.Common.Extensions;
 using Issueneter.Domain.Enums;
@@ -13,13 +13,13 @@ namespace Issueneter.Application.Commands.Handlers;
 
 internal class CreateCommandHandler : ICommandHandler
 {
-    private readonly WorkerConfigurationValidator _validator;
+    private readonly IWorkerConfigurationValidator _validator;
     private readonly IScheduler _scheduler;
     private readonly IWorkerConfigurationRepo _workerConfigurationRepo;
     private readonly ITransactionProvider _transactionProvider;
 
     public CreateCommandHandler(
-        WorkerConfigurationValidator validator, 
+        IWorkerConfigurationValidator validator, 
         IScheduler scheduler, 
         IWorkerConfigurationRepo workerConfigurationRepo, 
         ITransactionProvider transactionProvider)
@@ -53,7 +53,7 @@ internal class CreateCommandHandler : ICommandHandler
         
         if (!Enum.TryParseSafe<ClientType>(createCommand.ClientType, out var clientType))
         {
-            return $"Invalid provider type: {createCommand.ClientType}";
+            return $"Invalid client type: {createCommand.ClientType}";
         }
 
         var config = new WorkerConfiguration(

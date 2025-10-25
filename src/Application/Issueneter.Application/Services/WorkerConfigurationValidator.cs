@@ -1,11 +1,11 @@
-﻿using Issueneter.Domain.Interfaces.Filters;
+using Issueneter.Domain.Interfaces.Filters;
 using Issueneter.Domain.Interfaces.Services;
 using Issueneter.Domain.Models;
 using Issueneter.Domain.ValueObjects;
 
 namespace Issueneter.Application.Services;
 
-internal class WorkerConfigurationValidator
+internal class WorkerConfigurationValidator : IWorkerConfigurationValidator
 {
     private readonly IProviderFactory _providerFactory;
     private readonly IClientFactory _clientFactory;

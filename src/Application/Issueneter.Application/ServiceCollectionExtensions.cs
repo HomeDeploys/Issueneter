@@ -1,4 +1,4 @@
-﻿using Issueneter.Application.Commands;
+using Issueneter.Application.Commands;
 using Issueneter.Application.Commands.Handlers;
 using Issueneter.Application.Services;
 using Issueneter.Domain.Interfaces.Commands;
@@ -14,7 +14,7 @@ public static class ServiceCollectionExtensions
         return serviceCollection
             .AddSingleton<ICommandParser, CommandParser>()
             .AddSingleton<IMessageFormatter, MessageFormatter>()
-            .AddScoped<WorkerConfigurationValidator>()
+            .AddScoped<IWorkerConfigurationValidator, WorkerConfigurationValidator>()
             .AddScoped<ICommandHandlerFactory, CommandHandlerFactory>()
             .AddScoped<IWorker, Worker>()
             .AddScoped<IClientFactory, ClientFactory>()
