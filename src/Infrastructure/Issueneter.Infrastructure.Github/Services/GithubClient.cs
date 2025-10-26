@@ -32,11 +32,11 @@ internal class GithubClient
         }
     }
 
-    public async Task<IReadOnlyCollection<GithubIssueEntity>> GetIssues(string owner, string repo, DateTimeOffset? since)
+    public async Task<IReadOnlyCollection<GithubIssueEventEntity>> GetIssuesEvents(string owner, string repo, DateTimeOffset? since)
     {
         var isFirstRun = since is null;
         var startPage = 1;
-        var domainIssues = new List<GithubIssueEntity>();
+        var domainIssues = new List<GithubIssueEventEntity>();
         
         // TODO: Rate limiter handler
         while (startPage < _configuration.PageLimitPerRun)
@@ -65,12 +65,13 @@ internal class GithubClient
 
     private static bool IsIssueActivity(Activity activity) => activity is { Type: "IssuesEvent", Payload: IssueEventPayload { Action: "created" or "labeled"} };
     
-    private GithubIssueEntity ToDomain(Activity activity)
+    private GithubIssueEventEntity ToDomain(Activity activity)
     {
         var issueEvent = (IssueEventPayload)activity.Payload;
-        return new GithubIssueEntity()
+        return new GithubIssueEventEntity()
         {
             Id = issueEvent.Issue.Id,
+            Event = issueEvent.Action,
             Author = issueEvent.Issue.User.Login,
             Title = issueEvent.Issue.Title,
             Body = issueEvent.Issue.Body,

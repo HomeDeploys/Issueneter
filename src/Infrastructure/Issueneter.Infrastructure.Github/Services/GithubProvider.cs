@@ -52,7 +52,7 @@ internal class GithubProvider : IEntityProvider
             fetchSince = snapshot.LastIssueCreated;
         }
 
-        var issues = await _client.GetIssues(owner, repo, fetchSince);
+        var issues = await _client.GetIssuesEvents(owner, repo, fetchSince);
 
         var maxUpdatedAt = issues.Count > 0
             ? issues.Max(i => i.UpdatedAt)
@@ -72,9 +72,10 @@ internal class GithubProvider : IEntityProvider
 
     public Entity GetSample()
     {
-        return new GithubIssueEntity()
+        return new GithubIssueEventEntity()
         {
             Id = 1,
+            Event = "Created",
             Author = "Author",
             Body = "Some body",
             Url = "github.com",

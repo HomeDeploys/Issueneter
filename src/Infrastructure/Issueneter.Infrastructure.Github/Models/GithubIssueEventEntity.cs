@@ -2,9 +2,10 @@
 
 namespace Issueneter.Infrastructure.Github.Models;
 
-internal class GithubIssueEntity : Entity
+internal class GithubIssueEventEntity : Entity
 {
     public required long Id { get; set; }
+    public required string Event { get; set; }
     public required string Author { get; init; }
     public required string Title { get; init; }
     public required string Body { get; init; }
