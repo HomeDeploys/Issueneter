@@ -12,7 +12,7 @@ namespace Issueneter.Infrastructure.Telegram.Services;
 
 internal partial class TelegramClient : IClient
 {
-    [GeneratedRegex(@"^(?<chatId>[0-9]+)(\/(?<threadId>[0-9]+))?$", RegexOptions.Compiled)]
+    [GeneratedRegex(@"^(?<chatId>-?[0-9]+)(\/(?<threadId>-?[0-9]+))?$", RegexOptions.Compiled)]
     private static partial Regex TargetChatRegex();
 
     private readonly TelegramBotClient _client;

@@ -1,5 +1,4 @@
 ﻿using Issueneter.Application.Commands.Models;
-using Issueneter.Application.Services;
 using Issueneter.Domain.Interfaces.Commands;
 using Issueneter.Domain.Interfaces.Connection;
 using Issueneter.Domain.Interfaces.Repos;
@@ -10,12 +9,12 @@ namespace Issueneter.Application.Commands.Handlers;
 
 internal class UpdateCommandHandler : ICommandHandler
 {
-    private readonly WorkerConfigurationValidator  _validator;
+    private readonly IWorkerConfigurationValidator  _validator;
     private readonly IWorkerConfigurationRepo _repo;
     private readonly IScheduler _scheduler;
     private readonly ITransactionProvider _transactionProvider;
 
-    public UpdateCommandHandler(WorkerConfigurationValidator validator, IWorkerConfigurationRepo repo, IScheduler scheduler, ITransactionProvider transactionProvider)
+    public UpdateCommandHandler(IWorkerConfigurationValidator validator, IWorkerConfigurationRepo repo, IScheduler scheduler, ITransactionProvider transactionProvider)
     {
         _validator = validator;
         _repo = repo;

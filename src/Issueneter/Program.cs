@@ -1,9 +1,11 @@
+using Hangfire;
 using Issueneter.Application;
 using Issueneter.Application.Parser;
 using Issueneter.Infrastructure.Background;
 using Issueneter.Infrastructure.Database;
 using Issueneter.Infrastructure.Github;
 using Issueneter.Infrastructure.Telegram;
+using Issueneter.Utils;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,6 +38,10 @@ var app = builder.Build();
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 app.UseAuthorization();
+app.UseHangfireDashboard("/hangfire", new DashboardOptions()
+{
+    Authorization = [new UnsecureDashboardAuthorizationFilter()]
+});
 
 app.MapControllers();
 using (var scope = app.Services.CreateScope())

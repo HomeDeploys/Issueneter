@@ -54,6 +54,7 @@ internal class TelegramHandler
         catch (Exception e)
         {
             _logger.LogError(e, "Error while handling message {messageText}", message.Text);
+            await _client.SendMessage(message.Chat.Id, "Error processing command, try again later", messageThreadId: message.MessageThreadId);
         }
     }
 
