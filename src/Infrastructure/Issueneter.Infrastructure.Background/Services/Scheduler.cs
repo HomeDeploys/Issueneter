@@ -30,4 +30,11 @@ internal class Scheduler : IScheduler
 
         return Task.CompletedTask;
     }
+
+    public Task Deschedule(WorkerId workerId)
+    {
+        _recurringJobManager.RemoveIfExists(workerId.ToString());
+        
+        return Task.CompletedTask;
+    }
 }

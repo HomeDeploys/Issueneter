@@ -27,6 +27,7 @@ public static class ServiceCollectionExtensions
         return serviceCollection
             .AddScoped<ICommandHandler, CreateCommandHandler>()
             .AddScoped<ICommandHandler, UpdateCommandHandler>()
-            .AddScoped<ICommandHandler, GetCommandHandler>();
+            .AddScoped<ICommandHandler, GetCommandHandler>()
+            .AddScoped<ICommandHandler, DeleteCommandHandler>();
     }
 }

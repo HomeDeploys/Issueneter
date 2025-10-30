@@ -16,6 +16,7 @@ internal class TelegramHandler
     private readonly ICommandParser _commandParser;
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<TelegramHandler> _logger;
+    private readonly HashSet<long> _usersWhitelist;
 
     public TelegramHandler(
         IOptions<TelegramClientConfiguration> configuration,
@@ -28,6 +29,7 @@ internal class TelegramHandler
         _commandParser = commandParser;
         _scopeFactory = scopeFactory;
         _logger = logger;
+        _usersWhitelist = configuration.Value.AllowedUsers.ToHashSet();
     }
 
     public void Start()
@@ -45,6 +47,7 @@ internal class TelegramHandler
     {
         if (type != UpdateType.Message) return;
         if (string.IsNullOrEmpty(message.Text)) return;
+        if (!_usersWhitelist.Contains(message.From?.Id ?? 0)) return;
 
         try
         {

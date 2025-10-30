@@ -6,4 +6,5 @@ public interface IScheduler
 {
     ValidationResult Validate(string schedule);
     Task Schedule(string schedule, WorkerId workerId);
+    Task Deschedule(WorkerId workerId);
 }

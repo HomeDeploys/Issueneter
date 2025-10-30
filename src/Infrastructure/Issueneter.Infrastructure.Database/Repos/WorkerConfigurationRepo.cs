@@ -31,6 +31,19 @@ internal class WorkerConfigurationRepo : IWorkerConfigurationRepo
         return dto?.ToDomain();
     }
 
+    public async Task Delete(WorkerId workerId, CancellationToken token)
+    {
+        var parameters = new
+        {
+            WorkerId = workerId.Value
+        };
+        
+        const string query = $"DELETE FROM worker_configuration WHERE worker_id = @{nameof(parameters.WorkerId)}";
+
+        await using var connection = await _connectionFactory.GetConnection(token);
+        await connection.Execute(query, parameters);
+    }
+
     public async Task<WorkerId> Create(WorkerConfiguration configuration, CancellationToken token)
     {
         var dto = WorkerConfigurationDto.FromDomain(configuration);
