@@ -66,7 +66,7 @@ public abstract class Entity
         return value switch
         {
             null => string.Empty,
-            IEnumerable enumerable => string.Join(", ", enumerable),
+            IEnumerable<object> enumerable => string.Join(", ", enumerable),
             _ => value.ToString()
         };
     }

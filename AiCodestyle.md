@@ -61,7 +61,7 @@
 * Every test must contain Arrange Act Assert comments
 * Every test must check outcome using FluentAssertions
 * Every test that requires random fake data must use Bogus Faker
-* Use NUnit for all tests
+* Use XUnit for all tests
 * Group tests in classes by the class they are testing
 * Use TestCase attributes for parameterized tests
 * Include descriptive TestName for TestCase attributes

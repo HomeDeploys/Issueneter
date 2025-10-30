@@ -4,7 +4,7 @@ using Issueneter.Application.Parser.Unary;
 using Issueneter.Tests.Setup;
 using Xunit;
 
-namespace Issueneter.Tests.Unit;
+namespace Issueneter.Tests.Unit.Filters;
 
 public class FilterParserTests : TestBase
 {
