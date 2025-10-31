@@ -18,5 +18,6 @@
     <ItemGroup>
       <Folder Include="Helpers\" />
       <Folder Include="Unit\Services\" />
+      <Folder Include="Unit\Telegram\" />
     </ItemGroup>
 </Project>

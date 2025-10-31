@@ -19,13 +19,14 @@ internal class TelegramHandler
     private readonly HashSet<long> _usersWhitelist;
 
     public TelegramHandler(
+        TelegramBotClient client,
         IOptions<TelegramClientConfiguration> configuration,
         ICommandParser commandParser, 
         IServiceScopeFactory scopeFactory, 
         ILogger<TelegramHandler> logger)
     {
         _tokenSource = new CancellationTokenSource();
-        _client = new TelegramBotClient(configuration.Value.Token, cancellationToken: _tokenSource.Token);
+        _client = client;
         _commandParser = commandParser;
         _scopeFactory = scopeFactory;
         _logger = logger;

@@ -8,7 +8,6 @@ using Issueneter.Infrastructure.Github.Models;
 
 namespace Issueneter.Infrastructure.Github.Services;
 
-// TODO: Maybe move to application
 internal class GithubProvider : IEntityProvider
 {
     private readonly GithubClient _client;

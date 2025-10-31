@@ -3,8 +3,6 @@ using Issueneter.Common.Exceptions;
 using Issueneter.Domain.Enums;
 using Issueneter.Domain.Interfaces.Services;
 using Issueneter.Domain.ValueObjects;
-using Issueneter.Infrastructure.Telegram.Configuration;
-using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 
@@ -15,11 +13,11 @@ internal partial class TelegramClient : IClient
     [GeneratedRegex(@"^(?<chatId>-?[0-9]+)(\/(?<threadId>-?[0-9]+))?$", RegexOptions.Compiled)]
     private static partial Regex TargetChatRegex();
 
-    private readonly TelegramBotClient _client;
+    private readonly ITelegramBotClient _client;
 
-    public TelegramClient(IOptions<TelegramClientConfiguration> configuration)
+    public TelegramClient(ITelegramBotClient client)
     {
-        _client = new TelegramBotClient(configuration.Value.Token);
+        _client = client;
     }
 
     public ClientType Type =>  ClientType.Telegram;
