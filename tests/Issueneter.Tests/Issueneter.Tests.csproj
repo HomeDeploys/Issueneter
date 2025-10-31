@@ -16,6 +16,7 @@
       <ProjectReference Include="..\..\src\Issueneter\Issueneter.csproj" />
     </ItemGroup>
     <ItemGroup>
+      <Folder Include="Helpers\" />
       <Folder Include="Unit\Services\" />
     </ItemGroup>
 </Project>

@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Issueneter.Application.Services;
 using Issueneter.Domain.Models;
+using Issueneter.Tests.Helpers;
 using Issueneter.Tests.Setup;
 using Xunit;
 
@@ -15,7 +16,7 @@ public class MessageFormatterTests : TestBase
     {
         // Arrange
         var template = "Hello World";
-        var entity = new TestEntity { Name = "Test" };
+        var entity = new TestEntity { StringProperty = "Test" };
 
         // Act
         var result = _formatter.Validate(template, entity);
@@ -26,13 +27,12 @@ public class MessageFormatterTests : TestBase
     }
 
     [Theory]
-    [InlineData("Hello {Name}", TestDisplayName = "SinglePlaceholder")]
-    [InlineData("User {Name} has status {Status}", TestDisplayName = "MultiplePlaceholders")]
-    [InlineData("Name: {Name}, Age: {Age}, City: {City}", TestDisplayName = "ThreePlaceholders")]
+    [InlineData("Hello {StringProperty}", TestDisplayName = "SinglePlaceholder")]
+    [InlineData("User {StringProperty} has status {IntProperty}", TestDisplayName = "MultiplePlaceholders")]
     public void Validate_Should_ReturnSuccess_When_TemplateHasValidPlaceholders(string template)
     {
         // Arrange
-        var entity = new TestEntity { Name = "John", Age = "30", City = "NYC", Status = "Active" };
+        var entity = new TestEntity { StringProperty = "John", IntProperty = 42 };
 
         // Act
         var result = _formatter.Validate(template, entity);
@@ -47,7 +47,7 @@ public class MessageFormatterTests : TestBase
     {
         // Arrange
         var template = "";
-        var entity = new TestEntity { Name = "Test" };
+        var entity = new TestEntity { StringProperty = "Test" };
 
         // Act
         var result = _formatter.Validate(template, entity);
@@ -63,7 +63,7 @@ public class MessageFormatterTests : TestBase
     {
         // Arrange
         string? template = null;
-        var entity = new TestEntity { Name = "Test" };
+        var entity = new TestEntity { StringProperty = "Test" };
 
         // Act
         var result = _formatter.Validate(template!, entity);
@@ -75,12 +75,12 @@ public class MessageFormatterTests : TestBase
 
     [Theory]
     [InlineData("{NonExistentProperty}", TestDisplayName = "SingleInvalidProperty")]
-    [InlineData("Hello {Name} and {NonExistentProperty}", TestDisplayName = "MixedValidAndInvalidProperties")]
+    [InlineData("Hello {StringProperty} and {NonExistentProperty}", TestDisplayName = "MixedValidAndInvalidProperties")]
     [InlineData("{MissingProp1} {MissingProp2} {MissingProp3}", TestDisplayName = "MultipleInvalidProperties")]
     public void Validate_Should_ReturnFail_When_PropertyNotFound(string template)
     {
         // Arrange
-        var entity = new TestEntity { Name = "John", Age = "30" };
+        var entity = new TestEntity { StringProperty = "John" };
 
         // Act
         var result = _formatter.Validate(template, entity);
@@ -95,8 +95,8 @@ public class MessageFormatterTests : TestBase
     public void Validate_Should_ReturnFail_When_FirstOccurrenceOfInvalidPropertyIsFound()
     {
         // Arrange
-        var template = "{Name} {MissingProp1} {MissingProp2}";
-        var entity = new TestEntity { Name = "value" };
+        var template = "{StringProperty} {MissingProp1} {MissingProp2}";
+        var entity = new TestEntity { StringProperty = "value" };
 
         // Act
         var result = _formatter.Validate(template, entity);
@@ -111,7 +111,7 @@ public class MessageFormatterTests : TestBase
     {
         // Arrange
         var template = "";
-        var entity = new TestEntity { Name = "Test" };
+        var entity = new TestEntity { StringProperty = "Test" };
 
         // Act
         var result = _formatter.Format(template, entity);
@@ -125,7 +125,7 @@ public class MessageFormatterTests : TestBase
     {
         // Arrange
         var template = "   \t\n  ";
-        var entity = new TestEntity { Name = "Test" };
+        var entity = new TestEntity { StringProperty = "Test" };
 
         // Act
         var result = _formatter.Format(template, entity);
@@ -139,7 +139,7 @@ public class MessageFormatterTests : TestBase
     {
         // Arrange
         var template = "Hello World";
-        var entity = new TestEntity { Name = "Test" };
+        var entity = new TestEntity { StringProperty = "Test" };
 
         // Act
         var result = _formatter.Format(template, entity);
@@ -153,8 +153,8 @@ public class MessageFormatterTests : TestBase
     public void Format_Should_ReplaceMultiplePlaceholders_When_TemplateHasThreePlaceholders()
     {
         // Arrange
-        var template = "{Name}, {Age}, {City}";
-        var entity = new TestEntity { Name = "John", Age = "30", City = "NYC" };
+        var template = "{StringProperty}, {IntProperty}, {StringArrayProperty}";
+        var entity = new TestEntity { StringProperty = "John", IntProperty = 30, StringArrayProperty = ["NYC"]};
 
         // Act
         var result = _formatter.Format(template, entity);
@@ -167,8 +167,8 @@ public class MessageFormatterTests : TestBase
     public void Format_Should_ReplaceWithEmptyString_When_PropertyValueIsNull()
     {
         // Arrange
-        var template = "Hello {NullProperty}";
-        var entity = new TestEntity { NullProperty = null };
+        var template = "Hello {NullStringProperty}";
+        var entity = new TestEntity { NullStringProperty = null };
 
         // Act
         var result = _formatter.Format(template, entity);
@@ -181,8 +181,8 @@ public class MessageFormatterTests : TestBase
     public void Format_Should_HandleRepeatedPlaceholders_When_SamePropertyUsedMultipleTimes()
     {
         // Arrange
-        var template = "{Name} {Name} {Name}";
-        var entity = new TestEntity { Name = "Echo" };
+        var template = "{StringProperty} {StringProperty} {StringProperty}";
+        var entity = new TestEntity { StringProperty = "Echo" };
 
         // Act
         var result = _formatter.Format(template, entity);
@@ -195,8 +195,8 @@ public class MessageFormatterTests : TestBase
     public void Format_Should_ReplacePlaceholder_When_PropertyNameCaseMatches()
     {
         // Arrange
-        var template = "{Name}";
-        var entity = new TestEntity { Name = "Value" };
+        var template = "{StringProperty}";
+        var entity = new TestEntity { StringProperty = "Value" };
 
         // Act
         var result = _formatter.Format(template, entity);
@@ -206,13 +206,13 @@ public class MessageFormatterTests : TestBase
     }
 
     [Theory]
-    [InlineData("{name}", TestDisplayName = "LowercaseProperty")]
-    [InlineData("{NAME}", TestDisplayName = "UppercaseProperty")]
-    [InlineData("{NaMe}", TestDisplayName = "MixedCaseProperty")]
+    [InlineData("{stringproperty}", TestDisplayName = "LowercaseProperty")]
+    [InlineData("{STRINGPROPERTY}", TestDisplayName = "UppercaseProperty")]
+    [InlineData("{StringProPerTy}", TestDisplayName = "MixedCaseProperty")]
     public void Format_Should_ThrowException_When_PropertyNameCaseDoesNotMatch(string template)
     {
         // Arrange
-        var entity = new TestEntity { Name = "Value" };
+        var entity = new TestEntity { StringProperty = "Value" };
 
         // Act & Assert
         var action = () => _formatter.Format(template, entity);
@@ -223,8 +223,8 @@ public class MessageFormatterTests : TestBase
     public void Format_Should_HandleSpecialCharactersInPropertyValue_When_PropertyContainsSpecialChars()
     {
         // Arrange
-        var template = "Path: {FilePath}";
-        var entity = new TestEntity { FilePath = "C:\\Program Files\\App" };
+        var template = "Path: {StringProperty}";
+        var entity = new TestEntity { StringProperty = "C:\\Program Files\\App" };
 
         // Act
         var result = _formatter.Format(template, entity);
@@ -237,8 +237,8 @@ public class MessageFormatterTests : TestBase
     public void Format_Should_HandleNumericProperty_When_PropertyIsNumeric()
     {
         // Arrange
-        var template = "Age: {Age}";
-        var entity = new TestEntity { Age = "25" };
+        var template = "Age: {StringProperty}";
+        var entity = new TestEntity { StringProperty = "25" };
 
         // Act
         var result = _formatter.Format(template, entity);
@@ -251,8 +251,8 @@ public class MessageFormatterTests : TestBase
     public void Format_Should_HandleEmptyPropertyValue_When_PropertyIsEmpty()
     {
         // Arrange
-        var template = "Name: '{Name}'";
-        var entity = new TestEntity { Name = string.Empty };
+        var template = "Name: '{StringProperty}'";
+        var entity = new TestEntity { StringProperty = string.Empty };
 
         // Act
         var result = _formatter.Format(template, entity);
@@ -265,28 +265,13 @@ public class MessageFormatterTests : TestBase
     public void Format_Should_HandlePropertyValue_When_PropertyIsEnumerable()
     {
         // Arrange
-        var template = "Value: {ListProperty}";
-        var entity = new TestEntity { ListProperty = new []{"1", "2", "3"}};
+        var template = "Value: {StringArrayProperty}";
+        var entity = new TestEntity { StringArrayProperty = ["1", "2", "3"] };
 
         // Act
         var result = _formatter.Format(template, entity);
 
         // Assert
         result.Should().Be("Value: 1, 2, 3", because: "Enumerable properties should be formatted correctly");
-    }
-
-    /// <summary>
-    /// Test entity for MessageFormatter tests with various property types.
-    /// </summary>
-    private class TestEntity : Entity
-    {
-        public string? Name { get; set; }
-        public string? Status { get; set; }
-        public string? Age { get; set; }
-        public string? City { get; set; }
-        public string? NullProperty { get; set; }
-        public string? FilePath { get; set; }
-        
-        public IReadOnlyCollection<string>? ListProperty { get; set; }
     }
 }
