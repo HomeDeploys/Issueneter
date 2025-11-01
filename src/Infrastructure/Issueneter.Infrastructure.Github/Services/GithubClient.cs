@@ -1,4 +1,5 @@
-﻿using Issueneter.Infrastructure.Github.Configuration;
+﻿using Issueneter.Common.Exceptions;
+using Issueneter.Infrastructure.Github.Configuration;
 using Issueneter.Infrastructure.Github.Models;
 using Microsoft.Extensions.Options;
 using Octokit;
@@ -41,12 +42,19 @@ internal class GithubClient
         // TODO: Rate limiter handler
         while (startPage < _configuration.PageLimitPerRun)
         {
-            var events = await _client.Activity.Events.GetAllForRepository(owner, repo, new ApiOptions()
+            var uri = new Uri($"repos/{owner}/{repo}/events", UriKind.Relative);
+            var eventsResponse = await _client.Connection.Get<List<ExtendedActivity>>(uri, new Dictionary<string, string>()
             {
-                PageSize = _configuration.PageSize,
-                StartPage = startPage
+                ["per_page"] = _configuration.PageSize.ToString(),
+                ["page"] = startPage.ToString()
             });
 
+            if (eventsResponse.HttpResponse.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                throw new IssueneterException($"Github API returned status code {eventsResponse.HttpResponse.StatusCode} with body {eventsResponse.HttpResponse.Body}");
+            }
+            
+            var events = eventsResponse.Body;
             var filteredEvents = events.Where(IsIssueActivity).Where(c => c.CreatedAt > since).Select(ToDomain);
             domainIssues.AddRange(filteredEvents);
 
@@ -63,11 +71,12 @@ internal class GithubClient
             .ToList();
     }
 
-    private static bool IsIssueActivity(Activity activity) => activity is { Type: "IssuesEvent", Payload: IssueEventPayload { Action: "created" or "labeled"} };
+    private static bool IsIssueActivity(ExtendedActivity activity) => activity is { Type: "IssuesEvent", Payload.Action: "created" or "labeled" };
     
-    private GithubIssueEventEntity ToDomain(Activity activity)
+    private GithubIssueEventEntity ToDomain(ExtendedActivity activity)
     {
-        var issueEvent = (IssueEventPayload)activity.Payload;
+        var issueEvent = activity.Payload;
+        
         return new GithubIssueEventEntity()
         {
             Id = issueEvent.Issue.Id,
@@ -78,8 +87,7 @@ internal class GithubClient
             Url = issueEvent.Issue.HtmlUrl,
             CreatedAt = issueEvent.Issue.CreatedAt,
             UpdatedAt = activity.CreatedAt,
-            // TODO: Keep only added labels
-            Labels = issueEvent.Issue.Labels.Select(l => l.Name).ToList()
+            Labels = issueEvent.Action == "created" ? issueEvent.Issue.Labels.Select(l => l.Name).ToArray() : [issueEvent.Label.Name]
         };
     }
 }
