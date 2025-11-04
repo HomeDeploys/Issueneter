@@ -67,7 +67,7 @@ internal class GithubClient
         }
 
         return domainIssues.GroupBy(i => i.Id)
-            .Select(g => g.MaxBy(i => i.CreatedAt)!)
+            .Select(g => g.Aggregate(Merge))
             .ToList();
     }
 
@@ -88,6 +88,22 @@ internal class GithubClient
             CreatedAt = issueEvent.Issue.CreatedAt,
             UpdatedAt = activity.CreatedAt,
             Labels = issueEvent.Action == "created" ? issueEvent.Issue.Labels.Select(l => l.Name).ToArray() : [issueEvent.Label.Name]
+        };
+    }
+
+    private GithubIssueEventEntity Merge(GithubIssueEventEntity left, GithubIssueEventEntity right)
+    {
+        return new GithubIssueEventEntity()
+        {
+            Id = left.Id,
+            Event = left.Event,
+            Author = left.Author,
+            Title = left.Title,
+            Body = left.Body,
+            Url = left.Url,
+            CreatedAt = left.CreatedAt,
+            Labels = left.Labels.Concat(right.Labels).ToHashSet(),
+            UpdatedAt = left.UpdatedAt
         };
     }
 }

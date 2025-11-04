@@ -12,5 +12,5 @@ internal class GithubIssueEventEntity : Entity
     public required string Url { get; init; }
     public required DateTimeOffset CreatedAt { get; init; }
     public required DateTimeOffset UpdatedAt { get; init; }
-    public required IReadOnlyList<string> Labels { get; init; }
+    public required IReadOnlyCollection<string> Labels { get; init; }
 }
