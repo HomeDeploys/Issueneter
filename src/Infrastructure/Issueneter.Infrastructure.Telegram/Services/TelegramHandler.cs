@@ -48,6 +48,7 @@ internal class TelegramHandler
     {
         if (type != UpdateType.Message) return;
         if (string.IsNullOrEmpty(message.Text)) return;
+        if (!message.Chat.IsDirectMessages) return;
         if (!_usersWhitelist.Contains(message.From?.Id ?? 0)) return;
 
         try
