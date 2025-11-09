@@ -35,7 +35,7 @@ jobs:
           path: '**/test-results.trx'
   deploy:
     needs: build_and_test
-      if: ${{ github.ref == 'refs/heads/master' }}
+    if: ${{ github.ref == 'refs/heads/master' }}
     name: "Bump Version and push docker image"
     runs-on: ubuntu-latest
     permissions:
