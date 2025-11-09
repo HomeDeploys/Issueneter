@@ -41,4 +41,4 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/issueneter:${{ steps.bump.outputs.version }},${{ secrets.DOCKERHUB_USERNAME }}/issueneter:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/issueneter:${{ steps.bump.outputs.new_tag }},${{ secrets.DOCKERHUB_USERNAME }}/issueneter:latest
