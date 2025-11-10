@@ -71,7 +71,7 @@ internal class GithubClient
             .ToList();
     }
 
-    private static bool IsIssueActivity(ExtendedActivity activity) => activity is { Type: "IssuesEvent", Payload.Action: "created" or "labeled" };
+    private static bool IsIssueActivity(ExtendedActivity activity) => activity is { Type: "IssuesEvent", Payload.Action: "opened" or "labeled" };
     
     private GithubIssueEventEntity ToDomain(ExtendedActivity activity)
     {
