@@ -87,7 +87,7 @@ internal class GithubClient
             Url = issueEvent.Issue.HtmlUrl,
             CreatedAt = issueEvent.Issue.CreatedAt,
             UpdatedAt = activity.CreatedAt,
-            Labels = issueEvent.Action == "created" ? issueEvent.Issue.Labels.Select(l => l.Name).ToArray() : [issueEvent.Label.Name]
+            Labels = issueEvent.Action == "opened" ? issueEvent.Issue.Labels.Select(l => l.Name).ToArray() : [issueEvent.Label.Name]
         };
     }
 
