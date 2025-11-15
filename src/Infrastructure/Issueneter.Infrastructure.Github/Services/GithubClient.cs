@@ -36,17 +36,17 @@ internal class GithubClient
     public async Task<IReadOnlyCollection<GithubIssueEventEntity>> GetIssuesEvents(string owner, string repo, DateTimeOffset? since)
     {
         var isFirstRun = since is null;
-        var startPage = 1;
+        var pageNumber = 1;
         var domainIssues = new List<GithubIssueEventEntity>();
         
         // TODO: Rate limiter handler
-        while (startPage < _configuration.PageLimitPerRun)
+        while (pageNumber <= _configuration.PageLimitPerRun)
         {
             var uri = new Uri($"repos/{owner}/{repo}/events", UriKind.Relative);
             var eventsResponse = await _client.Connection.Get<List<ExtendedActivity>>(uri, new Dictionary<string, string>()
             {
                 ["per_page"] = _configuration.PageSize.ToString(),
-                ["page"] = startPage.ToString()
+                ["page"] = pageNumber.ToString()
             });
 
             if (eventsResponse.HttpResponse.StatusCode != System.Net.HttpStatusCode.OK)
@@ -58,12 +58,20 @@ internal class GithubClient
             var filteredEvents = events.Where(IsIssueActivity).Where(c => c.CreatedAt > since).Select(ToDomain);
             domainIssues.AddRange(filteredEvents);
 
-            if (isFirstRun || events.Any(e => e.CreatedAt <= since) || events.Count() < _configuration.PageSize)
+            if (isFirstRun || events.Any(e => e.CreatedAt <= since))
             {
                 break;
             }
 
-            startPage++;
+            if (!eventsResponse.HttpResponse.Headers.TryGetValue("Link", out var links))
+            {
+                break;
+            }
+
+            if (!GithubInfoParser.TryParseNextPage(links, out pageNumber))
+            {
+                break;
+            }
         }
 
         return domainIssues.GroupBy(i => i.Id)

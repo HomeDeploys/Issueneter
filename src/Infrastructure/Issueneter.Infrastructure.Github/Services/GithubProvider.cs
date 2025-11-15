@@ -24,7 +24,7 @@ internal class GithubProvider : IEntityProvider
     public ValidationResult Validate(string target)
     {
         // TODO: Add check if repo exists
-        var parsed = GithubTargetParser.TryParse(target, out _, out _);
+        var parsed = GithubInfoParser.TryParseRepo(target, out _, out _);
 
         if (!parsed)
         {
@@ -36,7 +36,7 @@ internal class GithubProvider : IEntityProvider
 
     public async Task<IReadOnlyCollection<Entity>> Fetch(WorkerId workerId, string target, CancellationToken token)
     {
-        var isTargetValid = GithubTargetParser.TryParse(target, out var owner, out var repo);
+        var isTargetValid = GithubInfoParser.TryParseRepo(target, out var owner, out var repo);
 
         if (!isTargetValid)
         {
@@ -63,7 +63,6 @@ internal class GithubProvider : IEntityProvider
             LastIssueCreated = maxUpdatedAt
         };
 
-        // TODO: Transaction
         await _snapshotRepo.UpsertSnapshot(workerId, snapshot, token);
 
         return issues;
