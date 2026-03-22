@@ -1,4 +1,5 @@
-﻿using Issueneter.Domain.Interfaces.Services;
+﻿using System.Net;
+using Issueneter.Domain.Interfaces.Services;
 using Issueneter.Infrastructure.Telegram.Configuration;
 using Issueneter.Infrastructure.Telegram.Services;
 using Microsoft.Extensions.Configuration;
@@ -15,7 +16,28 @@ public static class ServiceCollectionExtensions
         serviceCollection.Configure<TelegramClientConfiguration>(configuration.GetSection(nameof(TelegramClientConfiguration)));
 
         return serviceCollection
-            .AddSingleton(sp => new TelegramBotClient(sp.GetRequiredService<IOptions<TelegramClientConfiguration>>().Value.Token))
+            .AddSingleton(sp =>
+            {
+                var configuration = sp.GetRequiredService<IOptions<TelegramClientConfiguration>>().Value;
+
+                if (configuration.ProxyConfiguration is null)
+                {
+                    return new TelegramBotClient(configuration.Token);
+                }
+
+                var webProxy = new WebProxy(configuration.ProxyConfiguration.Address)
+                {
+                    Credentials = new NetworkCredential(configuration.ProxyConfiguration.Username,
+                        configuration.ProxyConfiguration.Password)
+                };
+
+                var httpClientHandler = new HttpClientHandler
+                {
+                    Proxy = webProxy,
+                };
+                var httpClient = new HttpClient(httpClientHandler);
+                return new TelegramBotClient(configuration.Token, httpClient);
+            })
             .AddSingleton<ITelegramBotClient>(sp => sp.GetRequiredService<TelegramBotClient>())
             .AddSingleton<TelegramHandler>()
             .AddScoped<IClient, TelegramClient>();
