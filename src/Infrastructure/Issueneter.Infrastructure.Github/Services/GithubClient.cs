@@ -95,7 +95,8 @@ internal class GithubClient
             Url = issueEvent.Issue.HtmlUrl,
             CreatedAt = issueEvent.Issue.CreatedAt,
             UpdatedAt = activity.CreatedAt,
-            Labels = issueEvent.Action == "opened" ? issueEvent.Issue.Labels.Select(l => l.Name).ToArray() : [issueEvent.Label.Name]
+            Labels = issueEvent.Issue.Labels.Select(l => l.Name).ToArray(),
+            ChangedLabels = issueEvent.Action == "opened" ? issueEvent.Issue.Labels.Select(l => l.Name).ToArray() : [issueEvent.Label.Name]
         };
     }
 
@@ -111,6 +112,7 @@ internal class GithubClient
             Url = left.Url,
             CreatedAt = left.CreatedAt,
             Labels = left.Labels.Concat(right.Labels).ToHashSet(),
+            ChangedLabels = left.ChangedLabels.Concat(right.ChangedLabels).ToHashSet(),
             UpdatedAt = left.UpdatedAt
         };
     }

@@ -80,6 +80,7 @@ internal class GithubProvider : IEntityProvider
             CreatedAt = DateTimeOffset.Now,
             UpdatedAt = DateTimeOffset.Now,
             Labels = ["Label"],
+            ChangedLabels = ["ChangedLabel"],
             Title = "Title"
         };
     }
