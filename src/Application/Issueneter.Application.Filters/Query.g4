@@ -9,6 +9,7 @@ query
 expr
     : binaryOp // TODO: Better name for operator
     | unaryOp
+    | notOp
     ;
 
 binaryOp
@@ -19,6 +20,10 @@ unaryOp
     : (EQUALS | CONTAINS) LPAREN nameToken COMMA valueToken RPAREN
     ;
 
+notOp
+    : NOT LPAREN expr RPAREN
+    ;
+
 // --- Lexer rules ---
 
 // Operators (case-insensitive)
@@ -26,6 +31,7 @@ AND         : [Aa][Nn][Dd];
 OR          : [Oo][Rr];
 EQUALS      : [Ee][Qq][Uu][Aa][Ll][Ss];
 CONTAINS    : [Cc][Oo][Nn][Tt][Aa][Ii][Nn][Ss];
+NOT         : [Nn][Oo][Tt];
 
 // Name tokens: letters and digits
 nameToken

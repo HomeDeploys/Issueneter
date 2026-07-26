@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from Query.g4 by ANTLR 4.13.2
+// Generated from ./Query.g4 by ANTLR 4.13.2
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -55,6 +55,12 @@ public interface IQueryVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitUnaryOp([NotNull] QueryParser.UnaryOpContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="QueryParser.notOp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitNotOp([NotNull] QueryParser.NotOpContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="QueryParser.nameToken"/>.
 	/// </summary>

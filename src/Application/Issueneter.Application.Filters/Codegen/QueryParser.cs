@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from Query.g4 by ANTLR 4.13.2
+// Generated from ./Query.g4 by ANTLR 4.13.2
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -36,20 +36,21 @@ public partial class QueryParser : Parser {
 	protected static DFA[] decisionToDFA;
 	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
 	public const int
-		AND=1, OR=2, EQUALS=3, CONTAINS=4, NAME=5, STRING=6, INTEGER=7, DOUBLE=8, 
-		LPAREN=9, RPAREN=10, COMMA=11, WS=12;
+		AND=1, OR=2, EQUALS=3, CONTAINS=4, NOT=5, NAME=6, STRING=7, INTEGER=8, 
+		DOUBLE=9, LPAREN=10, RPAREN=11, COMMA=12, WS=13;
 	public const int
-		RULE_query = 0, RULE_expr = 1, RULE_binaryOp = 2, RULE_unaryOp = 3, RULE_nameToken = 4, 
-		RULE_valueToken = 5;
+		RULE_query = 0, RULE_expr = 1, RULE_binaryOp = 2, RULE_unaryOp = 3, RULE_notOp = 4, 
+		RULE_nameToken = 5, RULE_valueToken = 6;
 	public static readonly string[] ruleNames = {
-		"query", "expr", "binaryOp", "unaryOp", "nameToken", "valueToken"
+		"query", "expr", "binaryOp", "unaryOp", "notOp", "nameToken", "valueToken"
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, null, null, null, null, null, null, null, null, "'('", "')'", "','"
+		null, null, null, null, null, null, null, null, null, null, "'('", "')'", 
+		"','"
 	};
 	private static readonly string[] _SymbolicNames = {
-		null, "AND", "OR", "EQUALS", "CONTAINS", "NAME", "STRING", "INTEGER", 
+		null, "AND", "OR", "EQUALS", "CONTAINS", "NOT", "NAME", "STRING", "INTEGER", 
 		"DOUBLE", "LPAREN", "RPAREN", "COMMA", "WS"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
@@ -119,9 +120,9 @@ public partial class QueryParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 12;
+			State = 14;
 			expr();
-			State = 13;
+			State = 15;
 			Match(Eof);
 			}
 		}
@@ -142,6 +143,9 @@ public partial class QueryParser : Parser {
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public UnaryOpContext unaryOp() {
 			return GetRuleContext<UnaryOpContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public NotOpContext notOp() {
+			return GetRuleContext<NotOpContext>(0);
 		}
 		public ExprContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -171,14 +175,14 @@ public partial class QueryParser : Parser {
 		ExprContext _localctx = new ExprContext(Context, State);
 		EnterRule(_localctx, 2, RULE_expr);
 		try {
-			State = 17;
+			State = 20;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case AND:
 			case OR:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 15;
+				State = 17;
 				binaryOp();
 				}
 				break;
@@ -186,8 +190,15 @@ public partial class QueryParser : Parser {
 			case CONTAINS:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 16;
+				State = 18;
 				unaryOp();
+				}
+				break;
+			case NOT:
+				EnterOuterAlt(_localctx, 3);
+				{
+				State = 19;
+				notOp();
 				}
 				break;
 			default:
@@ -251,7 +262,7 @@ public partial class QueryParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 19;
+			State = 22;
 			_la = TokenStream.LA(1);
 			if ( !(_la==AND || _la==OR) ) {
 			ErrorHandler.RecoverInline(this);
@@ -260,27 +271,27 @@ public partial class QueryParser : Parser {
 				ErrorHandler.ReportMatch(this);
 			    Consume();
 			}
-			State = 20;
+			State = 23;
 			Match(LPAREN);
-			State = 21;
-			expr();
 			State = 24;
+			expr();
+			State = 27;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			do {
 				{
 				{
-				State = 22;
+				State = 25;
 				Match(COMMA);
-				State = 23;
+				State = 26;
 				expr();
 				}
 				}
-				State = 26;
+				State = 29;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			} while ( _la==COMMA );
-			State = 28;
+			State = 31;
 			Match(RPAREN);
 			}
 		}
@@ -338,7 +349,7 @@ public partial class QueryParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 30;
+			State = 33;
 			_la = TokenStream.LA(1);
 			if ( !(_la==EQUALS || _la==CONTAINS) ) {
 			ErrorHandler.RecoverInline(this);
@@ -347,15 +358,73 @@ public partial class QueryParser : Parser {
 				ErrorHandler.ReportMatch(this);
 			    Consume();
 			}
-			State = 31;
-			Match(LPAREN);
-			State = 32;
-			nameToken();
-			State = 33;
-			Match(COMMA);
 			State = 34;
-			valueToken();
+			Match(LPAREN);
 			State = 35;
+			nameToken();
+			State = 36;
+			Match(COMMA);
+			State = 37;
+			valueToken();
+			State = 38;
+			Match(RPAREN);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class NotOpContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NOT() { return GetToken(QueryParser.NOT, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LPAREN() { return GetToken(QueryParser.LPAREN, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ExprContext expr() {
+			return GetRuleContext<ExprContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RPAREN() { return GetToken(QueryParser.RPAREN, 0); }
+		public NotOpContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_notOp; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IQueryListener typedListener = listener as IQueryListener;
+			if (typedListener != null) typedListener.EnterNotOp(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IQueryListener typedListener = listener as IQueryListener;
+			if (typedListener != null) typedListener.ExitNotOp(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IQueryVisitor<TResult> typedVisitor = visitor as IQueryVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitNotOp(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public NotOpContext notOp() {
+		NotOpContext _localctx = new NotOpContext(Context, State);
+		EnterRule(_localctx, 8, RULE_notOp);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 40;
+			Match(NOT);
+			State = 41;
+			Match(LPAREN);
+			State = 42;
+			expr();
+			State = 43;
 			Match(RPAREN);
 			}
 		}
@@ -398,11 +467,11 @@ public partial class QueryParser : Parser {
 	[RuleVersion(0)]
 	public NameTokenContext nameToken() {
 		NameTokenContext _localctx = new NameTokenContext(Context, State);
-		EnterRule(_localctx, 8, RULE_nameToken);
+		EnterRule(_localctx, 10, RULE_nameToken);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 37;
+			State = 45;
 			Match(NAME);
 			}
 		}
@@ -447,14 +516,14 @@ public partial class QueryParser : Parser {
 	[RuleVersion(0)]
 	public ValueTokenContext valueToken() {
 		ValueTokenContext _localctx = new ValueTokenContext(Context, State);
-		EnterRule(_localctx, 10, RULE_valueToken);
+		EnterRule(_localctx, 12, RULE_valueToken);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 39;
+			State = 47;
 			_la = TokenStream.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 448L) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 896L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
@@ -475,17 +544,19 @@ public partial class QueryParser : Parser {
 	}
 
 	private static int[] _serializedATN = {
-		4,1,12,42,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,1,0,1,0,1,0,
-		1,1,1,1,3,1,18,8,1,1,2,1,2,1,2,1,2,1,2,4,2,25,8,2,11,2,12,2,26,1,2,1,2,
-		1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,4,1,4,1,5,1,5,1,5,0,0,6,0,2,4,6,8,10,0,3,
-		1,0,1,2,1,0,3,4,1,0,6,8,37,0,12,1,0,0,0,2,17,1,0,0,0,4,19,1,0,0,0,6,30,
-		1,0,0,0,8,37,1,0,0,0,10,39,1,0,0,0,12,13,3,2,1,0,13,14,5,0,0,1,14,1,1,
-		0,0,0,15,18,3,4,2,0,16,18,3,6,3,0,17,15,1,0,0,0,17,16,1,0,0,0,18,3,1,0,
-		0,0,19,20,7,0,0,0,20,21,5,9,0,0,21,24,3,2,1,0,22,23,5,11,0,0,23,25,3,2,
-		1,0,24,22,1,0,0,0,25,26,1,0,0,0,26,24,1,0,0,0,26,27,1,0,0,0,27,28,1,0,
-		0,0,28,29,5,10,0,0,29,5,1,0,0,0,30,31,7,1,0,0,31,32,5,9,0,0,32,33,3,8,
-		4,0,33,34,5,11,0,0,34,35,3,10,5,0,35,36,5,10,0,0,36,7,1,0,0,0,37,38,5,
-		5,0,0,38,9,1,0,0,0,39,40,7,2,0,0,40,11,1,0,0,0,2,17,26
+		4,1,13,50,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,1,0,
+		1,0,1,0,1,1,1,1,1,1,3,1,21,8,1,1,2,1,2,1,2,1,2,1,2,4,2,28,8,2,11,2,12,
+		2,29,1,2,1,2,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,4,1,4,1,4,1,4,1,4,1,5,1,5,1,
+		6,1,6,1,6,0,0,7,0,2,4,6,8,10,12,0,3,1,0,1,2,1,0,3,4,1,0,7,9,45,0,14,1,
+		0,0,0,2,20,1,0,0,0,4,22,1,0,0,0,6,33,1,0,0,0,8,40,1,0,0,0,10,45,1,0,0,
+		0,12,47,1,0,0,0,14,15,3,2,1,0,15,16,5,0,0,1,16,1,1,0,0,0,17,21,3,4,2,0,
+		18,21,3,6,3,0,19,21,3,8,4,0,20,17,1,0,0,0,20,18,1,0,0,0,20,19,1,0,0,0,
+		21,3,1,0,0,0,22,23,7,0,0,0,23,24,5,10,0,0,24,27,3,2,1,0,25,26,5,12,0,0,
+		26,28,3,2,1,0,27,25,1,0,0,0,28,29,1,0,0,0,29,27,1,0,0,0,29,30,1,0,0,0,
+		30,31,1,0,0,0,31,32,5,11,0,0,32,5,1,0,0,0,33,34,7,1,0,0,34,35,5,10,0,0,
+		35,36,3,10,5,0,36,37,5,12,0,0,37,38,3,12,6,0,38,39,5,11,0,0,39,7,1,0,0,
+		0,40,41,5,5,0,0,41,42,5,10,0,0,42,43,3,2,1,0,43,44,5,11,0,0,44,9,1,0,0,
+		0,45,46,5,6,0,0,46,11,1,0,0,0,47,48,7,2,0,0,48,13,1,0,0,0,2,20,29
 	};
 
 	public static readonly ATN _ATN =

@@ -29,6 +29,13 @@ internal class FilterBuilder : QueryBaseVisitor<IFilter>
         throw new ArgumentException($"Undefined binary filter {context.GetText()}");
     }
 
+    public override IFilter VisitNotOp(QueryParser.NotOpContext context)
+    {
+        var filter = context.expr().Accept(this);
+        
+        return new NotFilter(filter);
+    }
+
     public override IFilter VisitUnaryOp(QueryParser.UnaryOpContext context)
     {
         var name = context.nameToken().GetText();

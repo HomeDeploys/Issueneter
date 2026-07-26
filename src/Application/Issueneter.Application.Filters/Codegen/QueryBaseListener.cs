@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from Query.g4 by ANTLR 4.13.2
+// Generated from ./Query.g4 by ANTLR 4.13.2
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -83,6 +83,18 @@ public partial class QueryBaseListener : IQueryListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitUnaryOp([NotNull] QueryParser.UnaryOpContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="QueryParser.notOp"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterNotOp([NotNull] QueryParser.NotOpContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="QueryParser.notOp"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitNotOp([NotNull] QueryParser.NotOpContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="QueryParser.nameToken"/>.
 	/// <para>The default implementation does nothing.</para>
