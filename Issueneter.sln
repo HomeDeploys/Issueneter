@@ -30,8 +30,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{FC4976
 		Directory.Built.targets = Directory.Built.targets
 		Directory.Packages.props = Directory.Packages.props
 		docker-compose.yml = docker-compose.yml
-		AiCodestyle.md = AiCodestyle.md
-		Prompts.md = Prompts.md
 		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
