@@ -176,6 +176,30 @@ public class CreateCommandHandlerTests : TestBase
         _mockScheduler.Verify(s => s.Schedule(It.IsAny<string>(), expectedWorkerId), Times.Once, "scheduler should schedule worker");
     }
 
+    [Fact]
+    public void Metadata_Should_BeNonEmptyAndMatchCreateCommandContract()
+    {
+        // Arrange
+        var expectedArgumentNames = new[]
+        {
+            "ProviderType", "ProviderTarget", "Schedule", "Filter", "ClientType", "ClientTarget", "Template"
+        };
+
+        // Assert
+        _handler.Name.Should().Be("create", because: "create handler should be identified by the 'create' command name");
+        _handler.Description.Should().NotBeNullOrWhiteSpace(because: "handler must describe what the command does");
+        _handler.Example.Should().NotBeNullOrWhiteSpace(because: "handler must provide a usage example");
+        _handler.Arguments.Select(a => a.Name).Should().BeEquivalentTo(
+            expectedArgumentNames,
+            because: "Arguments must match the fields CreateCommand.Parse actually reads from Command.Parameters");
+        _handler.Arguments.Should().OnlyContain(
+            a => a.IsRequired,
+            because: "CreateCommand.Parse fails when any of its fields is missing, so all arguments are required");
+        _handler.Arguments.Should().OnlyContain(
+            a => !string.IsNullOrWhiteSpace(a.Description),
+            because: "every argument should be documented");
+    }
+
     private Command CreateCommand(string name, Dictionary<string, string>? parameters = null)
     {
         return new Command(name, WorkerId.Empty, parameters ?? new Dictionary<string, string>());

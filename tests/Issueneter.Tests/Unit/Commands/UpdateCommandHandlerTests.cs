@@ -259,6 +259,30 @@ public class UpdateCommandHandlerTests : TestBase
         VerifyRepositoryUpdateCalledWith(updatedConfig => GetConfigFieldValue(updatedConfig, fieldName) == newValue);
     }
 
+    [Fact]
+    public void Metadata_Should_BeNonEmptyAndMatchUpdateCommandContract()
+    {
+        // Arrange
+        var expectedArgumentNames = new[]
+        {
+            "ProviderTarget", "Schedule", "Filter", "ClientTarget", "Template"
+        };
+
+        // Assert
+        _handler.Name.Should().Be("update", because: "update handler should be identified by the 'update' command name");
+        _handler.Description.Should().NotBeNullOrWhiteSpace(because: "handler must describe what the command does");
+        _handler.Example.Should().NotBeNullOrWhiteSpace(because: "handler must provide a usage example");
+        _handler.Arguments.Select(a => a.Name).Should().BeEquivalentTo(
+            expectedArgumentNames,
+            because: "Arguments must match the fields UpdateCommand.Parse actually reads from Command.Parameters");
+        _handler.Arguments.Should().OnlyContain(
+            a => !a.IsRequired,
+            because: "UpdateCommand.Parse only requires at least one field, not each field individually");
+        _handler.Arguments.Should().OnlyContain(
+            a => !string.IsNullOrWhiteSpace(a.Description),
+            because: "every argument should be documented");
+    }
+
     private Command CreateCommand(string name, WorkerId workerId = default, Dictionary<string, string>? parameters = null)
     {
         return new Command(name, workerId, parameters ?? new Dictionary<string, string>());

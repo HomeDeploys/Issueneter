@@ -13,6 +13,14 @@ internal class GetCommandHandler : ICommandHandler
         _workerConfigurationRepo = workerConfigurationRepo;
     }
 
+    public string Name => "get";
+
+    public string Description => "Returns the current configuration of an existing worker.";
+
+    public IReadOnlyCollection<CommandArgumentInfo> Arguments => [];
+
+    public string Example => "get 123";
+
     public bool CanHandle(Command command)
     {
         return command.Name.Equals("get", StringComparison.InvariantCultureIgnoreCase);

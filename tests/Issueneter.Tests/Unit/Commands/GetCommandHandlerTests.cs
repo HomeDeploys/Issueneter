@@ -139,4 +139,18 @@ public class GetCommandHandlerTests : TestBase
         result.Should().Be(configuration.ToString(), because: "handler should return the string representation of the configuration");
         repo.Verify(x => x.Get(workerId, cancellationToken), Times.Once);
     }
+
+    [Fact]
+    public void Metadata_Should_BeNonEmptyAndMatchGetCommandContract()
+    {
+        // Arrange
+        var repo = new Mock<IWorkerConfigurationRepo>();
+        var handler = new GetCommandHandler(repo.Object);
+
+        // Assert
+        handler.Name.Should().Be("get", because: "get handler should be identified by the 'get' command name");
+        handler.Description.Should().NotBeNullOrWhiteSpace(because: "handler must describe what the command does");
+        handler.Example.Should().NotBeNullOrWhiteSpace(because: "handler must provide a usage example");
+        handler.Arguments.Should().BeEmpty(because: "get command only accepts a WorkerId in the first line, no Key: Value parameters");
+    }
 }

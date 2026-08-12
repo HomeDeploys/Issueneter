@@ -29,6 +29,33 @@ internal class CreateCommandHandler : ICommandHandler
         _transactionProvider = transactionProvider;
     }
 
+    public string Name => "create";
+
+    public string Description => "Creates a new worker that polls a provider on a schedule, filters the fetched entities and sends matching ones to a client.";
+
+    public IReadOnlyCollection<CommandArgumentInfo> Arguments { get; } =
+    [
+        new("ProviderType", "Provider type, e.g. Github", IsRequired: true),
+        new("ProviderTarget", "Provider-specific target, e.g. a GitHub repository in 'owner/repo' format", IsRequired: true),
+        new("Schedule", "Cron expression defining how often the worker polls the provider", IsRequired: true),
+        new("Filter", "Filter DSL expression applied to fetched entities, e.g. EQUALS(State, open)", IsRequired: true),
+        new("ClientType", "Client type, e.g. Telegram", IsRequired: true),
+        new("ClientTarget", "Client-specific target, e.g. a Telegram chat id or username", IsRequired: true),
+        new("Template", "Message template used to format matching entities", IsRequired: true)
+    ];
+
+    public string Example =>
+        """
+        create
+        ProviderType: Github
+        ProviderTarget: owner/repo
+        Schedule: 0 */5 * * * *
+        Filter: EQUALS(State, open)
+        ClientType: Telegram
+        ClientTarget: @channel
+        Template: {Title}
+        """;
+
     public bool CanHandle(Command command)
     {
         return command.Name.Equals("create", StringComparison.InvariantCultureIgnoreCase);

@@ -16,6 +16,14 @@ internal class DeleteCommandHandler : ICommandHandler
         _scheduler = scheduler;
     }
 
+    public string Name => "delete";
+
+    public string Description => "Deletes an existing worker and cancels its scheduled recurring job.";
+
+    public IReadOnlyCollection<CommandArgumentInfo> Arguments => [];
+
+    public string Example => "delete 123";
+
     public bool CanHandle(Command command)
     {
         return command.Name.Equals("delete", StringComparison.InvariantCultureIgnoreCase);

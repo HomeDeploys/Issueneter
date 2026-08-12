@@ -22,6 +22,26 @@ internal class UpdateCommandHandler : ICommandHandler
         _transactionProvider = transactionProvider;
     }
 
+    public string Name => "update";
+
+    public string Description => "Updates an existing worker's configuration. At least one of the arguments below must be provided; omitted ones keep their current value.";
+
+    public IReadOnlyCollection<CommandArgumentInfo> Arguments { get; } =
+    [
+        new("ProviderTarget", "Provider-specific target, e.g. a GitHub repository in 'owner/repo' format", IsRequired: false),
+        new("Schedule", "Cron expression defining how often the worker polls the provider", IsRequired: false),
+        new("Filter", "Filter DSL expression applied to fetched entities, e.g. EQUALS(State, open)", IsRequired: false),
+        new("ClientTarget", "Client-specific target, e.g. a Telegram chat id or username", IsRequired: false),
+        new("Template", "Message template used to format matching entities", IsRequired: false)
+    ];
+
+    public string Example =>
+        """
+        update 123
+        Schedule: 0 */10 * * * *
+        Filter: EQUALS(State, closed)
+        """;
+
     public bool CanHandle(Command command)
     {
         return command.Name.Equals("update", StringComparison.InvariantCultureIgnoreCase);

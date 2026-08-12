@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Reflection;
+using Issueneter.Domain.Attributes;
 
 namespace Issueneter.Domain.Models;
 
@@ -49,6 +50,20 @@ public abstract class Entity
             _ => throw new InvalidCastException(
                 $"Cannot cast property '{propertyName}' of type {value.GetType().Name} to {typeof(T).Name}.")
         };
+    }
+
+    public IReadOnlyCollection<EntityFieldInfo> GetFields()
+    {
+        var type = GetType();
+
+        var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+        return properties
+            .Select(property => new EntityFieldInfo(
+                property.Name,
+                property.PropertyType,
+                property.GetCustomAttribute<FieldDescriptionAttribute>()?.Description))
+            .ToList();
     }
 
     public string? GetProperty(string propertyName)
