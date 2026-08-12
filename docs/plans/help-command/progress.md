@@ -240,3 +240,108 @@ STEP_DOD_SELF_CHECK:
 - `dotnet build Issueneter.sln --configuration Release` — 0 warnings/errors — выполнено
 - `dotnet test Issueneter.sln --configuration Release` — 259/259 passed, без регрессий — выполнено
 - Нет TODO/FIXME без объяснения (существующий `//TODO: Rewrite with spans` не тронут, относится не к этому шагу) — выполнено
+
+## Шаг 5 (done, одобрено пользователем 2026-08-12 11:46 UTC, коммит — за пользователем)
+
+## Резюме шага 5
+
+Что изменено:
+- Новый `Issueneter.Application/Commands/HelpFormatter.cs` (`internal static class`) — чистые
+  функции без DI: `FormatCommandList`, `FormatCommandDetail`, `FormatProviderList`,
+  `FormatProviderDetail` (вызывает `provider.GetSample().GetFields()`), `FormatClientList`,
+  `FormatClientDetail`, приватный `FriendlyTypeName(Type)` (рекурсивно строит generic-имя вида
+  `IReadOnlyCollection<String>` вместо CLR `` IReadOnlyCollection`1 ``, поддерживает вложенные
+  generic-аргументы).
+- Новый `Issueneter.Application/Commands/Handlers/HelpCommandHandler.cs`: конструктор принимает
+  `IServiceProvider`, `IEnumerable<IEntityProvider>`, `IEnumerable<IClient>` (без
+  `IEnumerable<ICommandHandler>` — во избежание DI-цикла). `Name => "help"`. `CanHandle` сравнивает
+  `command.Name` с `"help"` case-insensitive (`InvariantCultureIgnoreCase`, как в остальных
+  хендлерах). `Handle()` читает `Type`/`Name` из `command.Parameters` через `GetValueOrDefault`,
+  резолвит `IEnumerable<ICommandHandler>` через `_serviceProvider.GetServices<ICommandHandler>()`
+  только внутри `Handle` (с explaining-комментарием прямо на месте вызова — единственный
+  неочевидный момент шага), и диспатчит:
+  - нет `Type`, или `Type=="command"` без `Name` → `FormatCommandList`;
+  - `Type=="command"` + `Name` → поиск хендлера по `Name` (case-insensitive) → `FormatCommandDetail`
+    или `"Command not found: {name}"`;
+  - `Type=="provider"`/`"client"` без `Name` → `FormatProviderList`/`FormatClientList`;
+  - `Type=="provider"`/`"client"` + `Name` → `EnumExtensions.TryParseSafe<ProviderType/ClientType>`;
+    если парсинг не удался — `"Unknown provider/client: {name}"`; если удался, но нет
+    зарегистрированного экземпляра с таким `.Type` — `"Provider/Client not found: {name}"`; иначе
+    `FormatProviderDetail`/`FormatClientDetail`;
+  - любой другой `Type` → `"Unknown help type: {type}. Expected 'command', 'provider' or 'client'."`.
+- `ServiceCollectionExtensions.AddCommandHandlers()` — добавлена
+  `.AddScoped<ICommandHandler, HelpCommandHandler>()`.
+- Новые тесты: `tests/Issueneter.Tests/Unit/Commands/HelpFormatterTests.cs` (форматирование на
+  `Mock<ICommandHandler>`/`Mock<IEntityProvider>`/`Mock<IClient>` + локальная `Entity`-фикстура с
+  `[FieldDescription]`, включая проверку friendly generic-имени `IReadOnlyCollection<String>`) и
+  `tests/Issueneter.Tests/Unit/Commands/HelpCommandHandlerTests.cs` (`CanHandle`, все ветки
+  диспатча `Handle`, включая "не найдено"/"неизвестный Type"/"валидный enum, но не
+  зарегистрирован" и case-insensitive поиск по имени; `IServiceProvider` мокается через
+  `Mock<IServiceProvider>` с `Setup(sp => sp.GetService(typeof(IEnumerable<ICommandHandler>)))`).
+
+Новые/изменённые контракты: публичных интерфейсов не менялось (`ICommandHandler`,
+`IEntityProvider`, `IClient` не тронуты — реализованы, не изменены). `HelpFormatter` и
+`HelpCommandHandler` — оба `internal`, видимы тестам через существующий
+`InternalsVisibleTo("Issueneter.Tests")` в `Issueneter.Application`.
+
+Ограничения и edge cases:
+- Точный текст сообщений (`"Command not found: {name}"`, `"Unknown provider: {name}"`,
+  `"Provider not found: {name}"`, `"Unknown help type: {type}. Expected 'command', 'provider' or
+  'client'."` и т.п.) и текст/вёрстка вывода `HelpFormatter` (списки через `"- {name}: {desc}"`,
+  секция `Fields:`/`Arguments:`/`Example:`, подсказки `"Use \"help command <name>\"..."`) — не
+  заданы явно ни в плане, ни в контексте от предыдущих шагов; сформулированы по своему усмотрению
+  как разумный, единообразный вариант. Если координатор/пользователь хочет другую формулировку —
+  это чисто текстовая правка, не влияющая на логику диспатча.
+- `Type=="command"` без `Name` и полное отсутствие `Type` сведены в одну ветку диспатча (см. DoD
+  плана: "без Type → список команд; Type=="command" (+Name опционален) → список или детальное
+  описание") — оба случая дают идентичный результат `FormatCommandList`, что соответствует явно
+  описанному в плане симметричному поведению.
+- Различение "невалидное значение enum" vs "валидное значение enum, но нет зарегистрированного
+  провайдера/клиента с таким типом" реализовано двумя разными сообщениями
+  (`"Unknown provider/client: ..."` против `"Provider/Client not found: ..."`) — сегодня в решении
+  единственный реализатор на каждый enum-value, так что второй путь недостижим в реальном рантайме,
+  но покрыт тестом с пустой инжектированной коллекцией (валидный `ProviderType.Github`/
+  `ClientType.Telegram`, но `_providers`/`_clients` пустые) — как явно допускалось описанием шага
+  ("probably not [meaningful], но write the not-found path anyway for robustness").
+- `HelpCommandHandler.Handle` не использует `CancellationToken token` (нет асинхронной работы —
+  весь результат детерминирован из уже инжектированных/резолвленных коллекций), поэтому реализован
+  без `async`/`await` (`Task.FromResult(...)`), чтобы не словить CS1998 под
+  `TreatWarningsAsErrors`.
+- Регистрация в DI протестирована только моками в этом шаге (per DoD); реальная
+  DI-резолюция без циклов — предмет отдельного шага 6, здесь не выполнялась намеренно.
+- `ICommandHandler`, `IEntityProvider`, `IClient`, `CommandParser`, `Entity`, `CanHandle` в других
+  хендлерах — не менялись, как и требовалось границами шага.
+
+Затронутые файлы:
+- `src/Application/Issueneter.Application/Commands/HelpFormatter.cs` (новый)
+- `src/Application/Issueneter.Application/Commands/Handlers/HelpCommandHandler.cs` (новый)
+- `src/Application/Issueneter.Application/ServiceCollectionExtensions.cs` (одна строка регистрации)
+- `tests/Issueneter.Tests/Unit/Commands/HelpFormatterTests.cs` (новый)
+- `tests/Issueneter.Tests/Unit/Commands/HelpCommandHandlerTests.cs` (новый)
+
+STEP_DOD_SELF_CHECK:
+- `HelpFormatter.cs` — `internal static class` с чистыми функциями без DI: `FormatCommandList`,
+  `FormatCommandDetail`, `FormatProviderList`, `FormatProviderDetail` (вызывает
+  `provider.GetSample().GetFields()`), `FormatClientList`, `FormatClientDetail`, приватный
+  `FriendlyTypeName(Type)`: выполнено
+- `HelpCommandHandler.cs` — конструктор `IServiceProvider`, `IEnumerable<IEntityProvider>`,
+  `IEnumerable<IClient>` (не `IEnumerable<ICommandHandler>`): выполнено
+- `Name => "help"`, `CanHandle` — сравнение `command.Name` с `"help"` case-insensitive: выполнено
+- `Handle()` читает `Type`/`Name` из `command.Parameters`, резолвит
+  `_serviceProvider.GetServices<ICommandHandler>()` только внутри `Handle`: выполнено
+- Диспатч: без Type → список команд; Type=="command" (+Name опционален) → список/детали/"не
+  найдено"; Type=="provider"/"client" аналогично через `TryParseSafe` + поиск по `.Type`;
+  неизвестный Type → сообщение об ошибке: выполнено
+- `ServiceCollectionExtensions.AddCommandHandlers()` — добавлена регистрация
+  `HelpCommandHandler`: выполнено
+- Решение компилируется (`dotnet build Issueneter.sln --configuration Release`) — 0
+  предупреждений, 0 ошибок: выполнено
+- Весь существующий тестовый набор зелёный: выполнено (291/291, было 259/259 до шага, +32 новых
+  теста, регрессий нет)
+- Новый `HelpCommandHandlerTests.cs` — список/детали для команд/провайдеров/клиентов, включая "не
+  найдено" и "неизвестный Type", `IServiceProvider` мокается через `Mock<IServiceProvider>` с
+  `GetService(typeof(IEnumerable<ICommandHandler>))`: выполнено
+- Новый `HelpFormatterTests.cs` — чистые тесты форматирования на
+  `Mock<ICommandHandler>`/`Mock<IEntityProvider>`/`Mock<IClient>` и локальной `Entity`-фикстуре с
+  `[FieldDescription]`: выполнено
+- Нет TODO/FIXME без объяснения: выполнено (новых не добавлено)

@@ -182,8 +182,8 @@
 - id: 5
 - depends_on: [1, 2, 3, 4]
 - risk: high
-- status: pending
-- checkpoint: pending
+- status: done
+- checkpoint: passed
 - dod: |
     - Новый `Issueneter.Application/Commands/HelpFormatter.cs`
       (`internal static class`) — чистые функции без DI:
