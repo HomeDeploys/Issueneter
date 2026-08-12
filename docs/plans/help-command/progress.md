@@ -188,3 +188,55 @@ STEP_DOD_SELF_CHECK:
 - `dotnet test Issueneter.sln --configuration Release`: выполнено (252/252 passed, 0 failed)
 - Свойства объявлены как обычные абстрактные свойства интерфейса (не `required`): выполнено
 - Нет TODO/FIXME без объяснения: выполнено (новых TODO не добавлено)
+
+## Шаг 4 (done, одобрено пользователем 2026-08-12 11:31 UTC, коммит — за пользователем)
+
+## Резюме шага 4
+
+Что изменено: `CommandParser.Parse` теперь пробует существующий `CommandNameRegex`
+первым; если он не совпал, но первая строка команды начинается с "help"
+(case-insensitive), применяется новый `[GeneratedRegex]` `HelpCommandNameRegex`
+(`^help(?:\s+(?<type>[a-zA-Z]+))?(?:\s+(?<name>\S+))?$`, `RegexOptions.IgnoreCase`).
+При успехе `Command.Name` фиксируется как `"help"`, `WorkerId` остаётся
+`WorkerId.Empty`, а захваченные группы `type`/`name` кладутся в
+`Parameters["Type"]`/`Parameters["Name"]` того же `Dictionary<string, string>`,
+который затем как обычно донаполняется циклом разбора `Key: Value`-строк
+(цикл общий для обоих путей, не дублируется). Если ни один из двух regex не
+совпал — прежняя ошибка `"Invalid command name: {lines[0]}"`, без изменений
+в тексте или условиях для не-help команд.
+
+Новые/изменённые контракты: нет публичных интерфейсов не менялось;
+`CommandParser` (internal) получил новый приватный `[GeneratedRegex]` метод
+`HelpCommandNameRegex()`. `Command`/`ICommandParser` не тронуты.
+
+Ограничения и edge cases:
+- "help provider Github extra" (4 токена) корректно падает с
+  `Invalid command name: help provider Github extra` — проверено юнит-тестом
+  и вручную (regex anchored `$`, нет отдельной группы для лишнего токена).
+- Строки вида "helper ..." (начинаются с "help" как префикс слова, но не
+  само слово "help") тоже уходят в fallback-ветку по `StartsWith`, но
+  `HelpCommandNameRegex` их отклоняет (literal "help" должен быть отдельным
+  токеном), так что итоговое поведение/сообщение об ошибке идентично
+  ситуации без этой ветки — регрессии нет.
+- `HelpCommandHandler` ещё не существует (шаг 5) — эта команда сейчас
+  нигде не используется, шаг проверяется только через
+  `CommandParser`/`Command` юнит-тесты.
+- Значения `Type`/`Name` сохраняются в исходном регистре (regex сам
+  case-insensitive при сопоставлении литерала "help", но не приводит
+  захваченные группы к нижнему регистру) — зафиксировано отдельным тестом
+  `HELP PROVIDER Github`.
+
+Затронутые файлы:
+- `src/Application/Issueneter.Application/Commands/CommandParser.cs`
+- `tests/Issueneter.Tests/Unit/Commands/CommandParserTests.cs`
+
+STEP_DOD_SELF_CHECK:
+- Fallback добавлен в `CommandParser.cs` по описанным условиям (startsWith "help", не проходит `CommandNameRegex`, новый regex с `IgnoreCase`, результат в `Parameters["Type"]`/`Parameters["Name"]`, `WorkerId.Empty`) — выполнено
+- Цикл разбора `Key: Value` общий, без дублирования — выполнено
+- Разбор любой другой команды не изменился (тот же regex/путь/текст ошибок, например `"create abc"` → `"Invalid command name: create abc"`) — выполнено, подтверждено прогоном существующих тестов без изменений в их ожиданиях
+- Юнит-тесты: `help`, `help 123`, `help command create`, `help provider Github`, `help provider` (только Type), `help provider Github extra` (падает) — все добавлены и проходят
+- Явный тест на 4-токенный edge case с тем же текстом ошибки, что и у прочих невалидных команд — выполнено
+- `HelpCommandHandler` не создан, шаг самодостаточен — выполнено
+- `dotnet build Issueneter.sln --configuration Release` — 0 warnings/errors — выполнено
+- `dotnet test Issueneter.sln --configuration Release` — 259/259 passed, без регрессий — выполнено
+- Нет TODO/FIXME без объяснения (существующий `//TODO: Rewrite with spans` не тронут, относится не к этому шагу) — выполнено

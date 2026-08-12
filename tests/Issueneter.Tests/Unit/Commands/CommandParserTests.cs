@@ -370,15 +370,114 @@ public class CommandParserTests : TestBase
         // Arrange
         var parser = new CommandParser();
         var commandWithMixedLineEndings = "create\r\nname: Test Issue\ndescription: This is a test";
-        
+
         // Act
         var result = parser.Parse(commandWithMixedLineEndings);
-        
+
         // Assert
         result.IsSuccess.Should().BeTrue(because: "command with mixed line endings should be parsed successfully");
         result.Entity.Should().NotBeNull();
         result.Entity!.Parameters.Should().ContainKeys("name", "description");
         result.Entity.Parameters["name"].Should().Be("Test Issue");
         result.Entity.Parameters["description"].Should().Be("This is a test");
+    }
+
+    [Fact]
+    public void Parse_Should_ExtractNameOnly_When_CommandIsBareHelp()
+    {
+        // Arrange
+        var parser = new CommandParser();
+        var bareHelpCommand = "help";
+
+        // Act
+        var result = parser.Parse(bareHelpCommand);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue(because: "bare \"help\" already matches the existing strict command-name regex");
+        result.Entity.Should().NotBeNull();
+        result.Entity!.Name.Should().Be("help");
+        result.Entity.WorkerId.Should().Be(WorkerId.Empty);
+        result.Entity.Parameters.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void Parse_Should_ExtractNameAndWorkerId_When_CommandIsHelpWithWorkerId()
+    {
+        // Arrange
+        var parser = new CommandParser();
+        var helpWithWorkerIdCommand = "help 123";
+
+        // Act
+        var result = parser.Parse(helpWithWorkerIdCommand);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue(because: "\"help 123\" already matches the existing strict command-name regex");
+        result.Entity.Should().NotBeNull();
+        result.Entity!.Name.Should().Be("help");
+        result.Entity.WorkerId.Value.Should().Be(123);
+        result.Entity.Parameters.Should().BeEmpty();
+    }
+
+    [Theory]
+    [InlineData("help command create", "command", "create", TestDisplayName = "help command create")]
+    [InlineData("help provider Github", "provider", "Github", TestDisplayName = "help provider Github")]
+    [InlineData("HELP PROVIDER Github", "PROVIDER", "Github", TestDisplayName = "help matching is case-insensitive")]
+    public void Parse_Should_ExtractTypeAndName_When_CommandIsHelpWithTypeAndName(
+        string helpCommand,
+        string expectedType,
+        string expectedName)
+    {
+        // Arrange
+        var parser = new CommandParser();
+
+        // Act
+        var result = parser.Parse(helpCommand);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue(because: "help commands with a type and name should fall back to the help regex");
+        result.Entity.Should().NotBeNull();
+        result.Entity!.Name.Should().Be("help");
+        result.Entity.WorkerId.Should().Be(WorkerId.Empty);
+        result.Entity.Parameters.Should().ContainKey("Type");
+        result.Entity.Parameters["Type"].Should().Be(expectedType);
+        result.Entity.Parameters.Should().ContainKey("Name");
+        result.Entity.Parameters["Name"].Should().Be(expectedName);
+    }
+
+    [Fact]
+    public void Parse_Should_ExtractTypeOnly_When_CommandIsHelpWithTypeButNoName()
+    {
+        // Arrange
+        var parser = new CommandParser();
+        var helpWithTypeOnlyCommand = "help provider";
+
+        // Act
+        var result = parser.Parse(helpWithTypeOnlyCommand);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue(because: "\"help provider\" should fall back to the help regex with only the type captured");
+        result.Entity.Should().NotBeNull();
+        result.Entity!.Name.Should().Be("help");
+        result.Entity.WorkerId.Should().Be(WorkerId.Empty);
+        result.Entity.Parameters.Should().ContainKey("Type");
+        result.Entity.Parameters["Type"].Should().Be("provider");
+        result.Entity.Parameters.Should().NotContainKey("Name", because: "no name token was supplied");
+    }
+
+    [Fact]
+    public void Parse_Should_ReturnFailureResult_When_HelpCommandHasTooManyTokens()
+    {
+        // Arrange
+        var parser = new CommandParser();
+        var helpWithExtraTokenCommand = "help provider Github extra";
+
+        // Act
+        var result = parser.Parse(helpWithExtraTokenCommand);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse(because: "the help fallback regex is anchored and must not accept a fourth token");
+        result.Error.Should().Be(
+            $"Invalid command name: {helpWithExtraTokenCommand}",
+            because: "malformed help commands should fail with the same error shape as any other invalid command name");
     }
 }

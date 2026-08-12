@@ -9,7 +9,10 @@ internal partial class CommandParser : ICommandParser
 {
     [GeneratedRegex(@"^(?<name>[a-zA-Z]+)( (?<workerId>[0-9]+))?$")]
     private static partial Regex CommandNameRegex();
-    
+
+    [GeneratedRegex(@"^help(?:\s+(?<type>[a-zA-Z]+))?(?:\s+(?<name>\S+))?$", RegexOptions.IgnoreCase)]
+    private static partial Regex HelpCommandNameRegex();
+
     public ParseResult<Command> Parse(string command)
     {
         //TODO: Rewrite with spans
@@ -17,23 +20,45 @@ internal partial class CommandParser : ICommandParser
         {
             return ParseResult<Command>.Fail("Command is empty");
         }
-        
+
         var lines = command.Split(["\r\n", "\r", "\n"], StringSplitOptions.RemoveEmptyEntries);
         var commandNameMatch = CommandNameRegex().Match(lines[0]);
+        var workerId = WorkerId.Empty;
+        var arguments = new Dictionary<string, string>();
+        string commandName;
 
-        if (!commandNameMatch.Success)
+        if (commandNameMatch.Success)
+        {
+            commandName = commandNameMatch.Groups["name"].Value;
+            if (commandNameMatch.Groups["workerId"].Success)
+            {
+                workerId = new WorkerId(long.Parse(commandNameMatch.Groups["workerId"].Value));
+            }
+        }
+        else if (lines[0].StartsWith("help", StringComparison.OrdinalIgnoreCase))
+        {
+            // "help <type> <name>" doesn't fit the strict "<name> [<workerId>]" shape, so it needs its own regex.
+            var helpCommandNameMatch = HelpCommandNameRegex().Match(lines[0]);
+            if (!helpCommandNameMatch.Success)
+            {
+                return ParseResult<Command>.Fail($"Invalid command name: {lines[0]}");
+            }
+
+            commandName = "help";
+            if (helpCommandNameMatch.Groups["type"].Success)
+            {
+                arguments["Type"] = helpCommandNameMatch.Groups["type"].Value;
+            }
+            if (helpCommandNameMatch.Groups["name"].Success)
+            {
+                arguments["Name"] = helpCommandNameMatch.Groups["name"].Value;
+            }
+        }
+        else
         {
             return ParseResult<Command>.Fail($"Invalid command name: {lines[0]}");
         }
 
-        var commandName = commandNameMatch.Groups["name"].Value;
-        var workerId = WorkerId.Empty;
-        if (commandNameMatch.Groups["workerId"].Success)
-        {
-            workerId = new WorkerId(long.Parse(commandNameMatch.Groups["workerId"].Value));
-        }
-        var arguments = new Dictionary<string, string>();
-        
         foreach (var line in lines.Skip(1))
         {
             if (string.IsNullOrWhiteSpace(line))

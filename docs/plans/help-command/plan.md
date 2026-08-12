@@ -155,7 +155,7 @@
 - id: 4
 - depends_on: []
 - risk: low
-- status: pending
+- status: done
 - checkpoint: n/a
 - dod: |
     - В `CommandParser.cs` добавлен fallback: если первая строка начинается
