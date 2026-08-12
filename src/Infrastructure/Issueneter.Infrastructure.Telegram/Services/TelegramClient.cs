@@ -21,6 +21,8 @@ internal partial class TelegramClient : IClient
     }
 
     public ClientType Type =>  ClientType.Telegram;
+    public string Description => "Sends a message to a Telegram chat or topic via the Bot API.";
+    public string TargetFormatDescription => "<chatId> or <chatId>/<threadId>";
     public ValidationResult Validate(string target)
     {
         var match = TargetChatRegex().IsMatch(target);

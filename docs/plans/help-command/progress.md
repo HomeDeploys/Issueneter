@@ -122,3 +122,69 @@ STEP_DOD_SELF_CHECK:
 - (ревизия) `Example` в `CreateCommandHandler`/`UpdateCommandHandler` переписаны на raw string literal, содержимое не изменилось: выполнено
 - (ревизия) `dotnet build Issueneter.sln --configuration Release` — 0 предупреждений/ошибок после правки: выполнено
 - (ревизия) `dotnet test --filter "FullyQualifiedName~CreateCommandHandlerTests|FullyQualifiedName~UpdateCommandHandlerTests"` — 33/33 пройдено без изменений в тестах: выполнено
+
+## Шаг 3 (done, одобрено пользователем 2026-08-12 11:17 UTC, коммит — за пользователем)
+
+## Резюме шага 3
+
+Что изменено:
+- Добавлены `string Description { get; }` и `string TargetFormatDescription { get; }` в
+  `IEntityProvider` и `IClient` (`Issueneter.Domain.Interfaces/Services/`).
+- `GithubProvider`: реализованы `Description` ("Polls issue events (opened issues and label
+  changes) from a GitHub repository.") и `TargetFormatDescription` (`"<owner>/<repo>"`, тот же
+  текст, что используется в `Validate()`).
+- `TelegramClient`: реализованы `Description` ("Sends a message to a Telegram chat or topic via
+  the Bot API.") и `TargetFormatDescription` (`"<chatId> or <chatId>/<threadId>"`, тот же текст,
+  что используется в `Validate()`).
+- `GithubIssueEventEntity`: на все 10 свойств (`Id`, `Event`, `Author`, `Title`, `Body`, `Url`,
+  `CreatedAt`, `UpdatedAt`, `Labels`, `ChangedLabels`) добавлены `[FieldDescription("...")]` с
+  содержательными описаниями — первое реальное использование атрибута из шага 1.
+- Новый тестовый файл `tests/Issueneter.Tests/Unit/Github/GithubProviderTests.cs` (папки
+  `Unit/Github/` ранее не существовало) — проверяет `Type`, `Description`,
+  `TargetFormatDescription`, `GetSample`.
+- В `tests/Issueneter.Tests/Unit/Telegram/TelegramClientTests.cs` добавлены тесты на
+  `Description` и `TargetFormatDescription`.
+
+Новые/изменённые контракты:
+- `IEntityProvider.Description : string` (get-only, абстрактное свойство интерфейса).
+- `IEntityProvider.TargetFormatDescription : string` (get-only).
+- `IClient.Description : string` (get-only).
+- `IClient.TargetFormatDescription : string` (get-only).
+Оба существующих реализатора (`GithubProvider`, `TelegramClient`) обновлены; других
+реализаторов этих интерфейсов в решении нет (проверено grep'ом).
+
+Ограничения и edge cases:
+- Тексты `Description` — новая содержательная формулировка (в коде их раньше не было), не
+  копирование существующего текста, в отличие от `TargetFormatDescription`, для которого DoD
+  явно требовал переиспользовать существующую строку из `Validate()` — она переиспользована
+  дословно для обоих классов.
+- `GithubProvider`/`GithubClient` остаются `internal` — тест создаёт `GithubClient` напрямую
+  через `IOptions<GithubClientConfiguration>` (не мок, т.к. класс конкретный, не интерфейс);
+  видимость обеспечена существующим `InternalsVisibleTo("Issueneter.Tests")` в сборке
+  Issueneter.Infrastructure.Github (без изменений — атрибут уже был из более раннего шага).
+- `Entity.GetFields()` в этом шаге не используется (по плану — используется в шаге 5).
+- `ICommandHandler` и обработчики команд (шаг 2), `CommandParser`/`HelpCommandHandler`/
+  `HelpFormatter`/`ServiceCollectionExtensions` (шаги 4/5) не затронуты.
+- Отдельный интеграционный тестовый сегмент не добавлялся — по DoD шага это не требуется
+  (проверка компилятором + юнит-тестами достаточна, DI-риск вынесен в шаг 6).
+
+Затронутые файлы:
+- src/Domain/Issueneter.Domain.Interfaces/Services/IEntityProvider.cs
+- src/Domain/Issueneter.Domain.Interfaces/Services/IClient.cs
+- src/Infrastructure/Issueneter.Infrastructure.Github/Services/GithubProvider.cs
+- src/Infrastructure/Issueneter.Infrastructure.Github/Models/GithubIssueEventEntity.cs
+- src/Infrastructure/Issueneter.Infrastructure.Telegram/Services/TelegramClient.cs
+- tests/Issueneter.Tests/Unit/Telegram/TelegramClientTests.cs
+- tests/Issueneter.Tests/Unit/Github/GithubProviderTests.cs (новый файл)
+
+STEP_DOD_SELF_CHECK:
+- `IEntityProvider`/`IClient` получили `Description`/`TargetFormatDescription`: выполнено
+- `GithubProvider.cs` Description + TargetFormatDescription = "<owner>/<repo>": выполнено
+- `TelegramClient.cs` Description + TargetFormatDescription = "<chatId> or <chatId>/<threadId>": выполнено
+- `GithubIssueEventEntity.cs` — `[FieldDescription]` на всех 10 свойствах: выполнено
+- Решение компилируется: выполнено (`dotnet build Issueneter.sln --configuration Release` — 0 warnings, 0 errors)
+- Новый `GithubProviderTests.cs` (Type/Description/TargetFormatDescription/GetSample) + дополнения в `TelegramClientTests.cs`: выполнено
+- Отдельный интеграционный сегмент не требуется: выполнено (не добавлялся, как и указано в DoD)
+- `dotnet test Issueneter.sln --configuration Release`: выполнено (252/252 passed, 0 failed)
+- Свойства объявлены как обычные абстрактные свойства интерфейса (не `required`): выполнено
+- Нет TODO/FIXME без объяснения: выполнено (новых TODO не добавлено)

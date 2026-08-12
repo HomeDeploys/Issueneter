@@ -20,7 +20,9 @@ internal class GithubProvider : IEntityProvider
     }
 
     public ProviderType Type => ProviderType.Github;
-    
+    public string Description => "Polls issue events (opened issues and label changes) from a GitHub repository.";
+    public string TargetFormatDescription => "<owner>/<repo>";
+
     public ValidationResult Validate(string target)
     {
         // TODO: Add check if repo exists

@@ -7,6 +7,8 @@ namespace Issueneter.Domain.Interfaces.Services;
 public interface IEntityProvider
 {
     ProviderType Type { get; }
+    string Description { get; }
+    string TargetFormatDescription { get; }
     ValidationResult Validate(string target);
     Task<IReadOnlyCollection<Entity>> Fetch(WorkerId workerId, string target, CancellationToken token);
     Entity GetSample();

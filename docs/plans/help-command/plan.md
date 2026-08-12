@@ -126,8 +126,8 @@
 - id: 3
 - depends_on: [1]
 - risk: high
-- status: pending
-- checkpoint: pending
+- status: done
+- checkpoint: passed
 - dod: |
     - В `IEntityProvider` и `IClient`
       (`Issueneter.Domain.Interfaces/Services/`) добавлены

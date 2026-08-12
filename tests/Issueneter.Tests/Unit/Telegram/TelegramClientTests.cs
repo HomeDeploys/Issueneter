@@ -23,6 +23,18 @@ public class TelegramClientTests : TestBase
         _telegramClient.Type.Should().Be(ClientType.Telegram, because: "TelegramClient should always return Telegram client type");
     }
 
+    [Fact]
+    public void Description_Should_NotBeEmpty()
+    {
+        _telegramClient.Description.Should().NotBeNullOrWhiteSpace(because: "TelegramClient should describe what it does");
+    }
+
+    [Fact]
+    public void TargetFormatDescription_Should_MatchValidationErrorFormat()
+    {
+        _telegramClient.TargetFormatDescription.Should().Be("<chatId> or <chatId>/<threadId>", because: "TargetFormatDescription should match the format described in Validate()");
+    }
+
     [Theory]
     [InlineData("123456", TestDisplayName = "PositiveChatIdOnly")]
     [InlineData("-123456", TestDisplayName = "NegativeChatIdOnly")]
