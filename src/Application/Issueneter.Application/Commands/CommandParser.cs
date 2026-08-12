@@ -59,22 +59,30 @@ internal partial class CommandParser : ICommandParser
             return ParseResult<Command>.Fail($"Invalid command name: {lines[0]}");
         }
 
+        if (commandName == "help")
+        {
+            // "help" is fully specified by its first line (literal "help <type> <name>" syntax,
+            // matched via either regex above) - subsequent "Key: Value" lines are not part of its
+            // syntax and must not be parsed as arguments.
+            return ParseResult<Command>.Success(new Command(commandName, workerId, arguments));
+        }
+
         foreach (var line in lines.Skip(1))
         {
             if (string.IsNullOrWhiteSpace(line))
             {
                 continue;
             }
-            
+
             var arg = line.Split(':', 2);
             if (arg.Length != 2)
             {
                 return ParseResult<Command>.Fail($"Invalid argument format: {line} \n Expected format: \"Name: Value\"");
             }
-            
+
             arguments[arg[0].Trim()] =  arg[1].Trim();
         }
-        
+
         return ParseResult<Command>.Success(new Command(commandName, workerId, arguments));
     }
 }

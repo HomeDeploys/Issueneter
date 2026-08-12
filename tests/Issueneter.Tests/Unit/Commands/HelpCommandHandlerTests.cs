@@ -173,6 +173,32 @@ public class HelpCommandHandlerTests : TestBase
         result.Should().Be(HelpFormatter.FormatProviderDetail(provider.Object), because: "a matching provider name should return its detailed description");
     }
 
+    [Theory]
+    [InlineData("github", TestDisplayName = "LowercaseName")]
+    [InlineData("GITHUB", TestDisplayName = "UppercaseName")]
+    public async Task Handle_Should_ReturnProviderDetail_When_NameMatchesCaseInsensitively(string name)
+    {
+        // Arrange
+        var provider = new Mock<IEntityProvider>();
+        provider.Setup(p => p.Type).Returns(ProviderType.Github);
+        provider.Setup(p => p.Description).Returns("Polls Github issues");
+        provider.Setup(p => p.TargetFormatDescription).Returns("<owner>/<repo>");
+        provider.Setup(p => p.GetSample()).Returns(new HelpCommandHandlerFixtureEntity());
+        var handler = CreateHandler([], [provider.Object], []);
+        var command = new Command(
+            "help",
+            WorkerId.Empty,
+            new Dictionary<string, string> { ["Type"] = "provider", ["Name"] = name });
+
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.Should().Be(
+            HelpFormatter.FormatProviderDetail(provider.Object),
+            because: "provider lookup by Name should be case-insensitive, consistent with command name lookup");
+    }
+
     [Fact]
     public async Task Handle_Should_ReturnUnknownProviderMessage_When_NameIsNotAValidProviderType()
     {

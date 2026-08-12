@@ -400,6 +400,25 @@ public class CommandParserTests : TestBase
         result.Entity.Parameters.Should().BeEmpty();
     }
 
+    [Theory]
+    [InlineData("help\nType: provider", TestDisplayName = "BareHelp")]
+    [InlineData("help 123\nType: provider", TestDisplayName = "HelpWithWorkerId")]
+    public void Parse_Should_IgnoreLinesAfterTheFirst_When_HelpMatchesStrictCommandNameRegex(string helpCommandWithExtraLine)
+    {
+        // Arrange: "help" and "help <workerId>" are matched by CommandNameRegex directly (not the
+        // help-specific fallback regex), but must still stop parsing after the first line.
+        var parser = new CommandParser();
+
+        // Act
+        var result = parser.Parse(helpCommandWithExtraLine);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue(because: "help is fully specified by its first line regardless of which regex matched it");
+        result.Entity.Should().NotBeNull();
+        result.Entity!.Name.Should().Be("help");
+        result.Entity.Parameters.Should().BeEmpty(because: "no parameters should be parsed from lines after the first for help");
+    }
+
     [Fact]
     public void Parse_Should_ExtractNameAndWorkerId_When_CommandIsHelpWithWorkerId()
     {
@@ -462,6 +481,31 @@ public class CommandParserTests : TestBase
         result.Entity.Parameters.Should().ContainKey("Type");
         result.Entity.Parameters["Type"].Should().Be("provider");
         result.Entity.Parameters.Should().NotContainKey("Name", because: "no name token was supplied");
+    }
+
+    [Theory]
+    [InlineData("help provider Github\nType: client", TestDisplayName = "ConflictingType")]
+    [InlineData("help provider Github\nName: Telegram", TestDisplayName = "ConflictingName")]
+    [InlineData("help provider Github\nSomeOtherKey: value", TestDisplayName = "UnrelatedKey")]
+    [InlineData("help provider Github\nnot a key value line at all", TestDisplayName = "MalformedLine")]
+    public void Parse_Should_IgnoreLinesAfterTheFirst_When_CommandIsHelp(string helpCommandWithExtraLines)
+    {
+        // Arrange
+        var parser = new CommandParser();
+
+        // Act
+        var result = parser.Parse(helpCommandWithExtraLines);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue(
+            because: "help is fully specified by its first line; anything after it (valid or not) must not be parsed");
+        result.Entity.Should().NotBeNull();
+        result.Entity!.Name.Should().Be("help");
+        result.Entity.Parameters.Should().ContainKey("Type");
+        result.Entity.Parameters["Type"].Should().Be("provider", because: "the positional Type must be unaffected by later lines");
+        result.Entity.Parameters.Should().ContainKey("Name");
+        result.Entity.Parameters["Name"].Should().Be("Github", because: "the positional Name must be unaffected by later lines");
+        result.Entity.Parameters.Should().HaveCount(2, because: "no parameters beyond the positional Type/Name should be added");
     }
 
     [Fact]
