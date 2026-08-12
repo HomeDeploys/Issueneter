@@ -40,7 +40,7 @@ internal class CreateCommandHandler : ICommandHandler
         new("Schedule", "Cron expression defining how often the worker polls the provider", IsRequired: true),
         new("Filter", "Filter DSL expression applied to fetched entities, e.g. EQUALS(State, open)", IsRequired: true),
         new("ClientType", "Client type, e.g. Telegram", IsRequired: true),
-        new("ClientTarget", "Client-specific target, e.g. a Telegram chat id or username", IsRequired: true),
+        new("ClientTarget", "Client-specific target, e.g. a Telegram chat id", IsRequired: true),
         new("Template", "Message template used to format matching entities", IsRequired: true)
     ];
 
@@ -52,7 +52,7 @@ internal class CreateCommandHandler : ICommandHandler
         Schedule: 0 */5 * * * *
         Filter: EQUALS(State, open)
         ClientType: Telegram
-        ClientTarget: @channel
+        ClientTarget: 123
         Template: {Title}
         """;
 

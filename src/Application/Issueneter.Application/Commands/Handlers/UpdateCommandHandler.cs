@@ -31,7 +31,7 @@ internal class UpdateCommandHandler : ICommandHandler
         new("ProviderTarget", "Provider-specific target, e.g. a GitHub repository in 'owner/repo' format", IsRequired: false),
         new("Schedule", "Cron expression defining how often the worker polls the provider", IsRequired: false),
         new("Filter", "Filter DSL expression applied to fetched entities, e.g. EQUALS(State, open)", IsRequired: false),
-        new("ClientTarget", "Client-specific target, e.g. a Telegram chat id or username", IsRequired: false),
+        new("ClientTarget", "Client-specific target, e.g. a Telegram chat id", IsRequired: false),
         new("Template", "Message template used to format matching entities", IsRequired: false)
     ];
 
